@@ -9,8 +9,11 @@ namespace ConfigService.Services
     public interface IConfigProvider
     {
         IEnumerable<string> GetConfigList();
+        IEnumerable<string> GetOverrideList();
 
         Task<string> LoadConfig(string id, bool hideSecrets, bool prettyJson);
+        Task<string> LoadConfigBase(string id);
+        Task<string> LoadOverride(string id);
     }
 
     class DefaultConfigProvider : IConfigProvider
@@ -37,6 +40,13 @@ namespace ConfigService.Services
                 .Select(Path.GetFileNameWithoutExtension);
         }
 
+        public IEnumerable<string> GetOverrideList()
+        {
+            return Directory
+                .EnumerateFiles(OverridesPath, "*.json")
+                .Select(Path.GetFileNameWithoutExtension);
+        }
+
         public async Task<string> LoadConfig(string id, bool hideSecrets, bool prettyJson)
         {
             var originStr = await File.ReadAllTextAsync(Path.Combine(ConfigsPath, id + ".json"));
@@ -56,6 +66,20 @@ namespace ConfigService.Services
             };
 
             return merger.Merge(originStr, overridingStr);
+        }
+
+        public async Task<string> LoadConfigBase(string id)
+        {
+            var str = await File.ReadAllTextAsync(Path.Combine(ConfigsPath, id + ".json"));
+            return JsonPrettyFormatter.JsonPrettify(str);
+        }
+
+        public async Task<string> LoadOverride(string id)
+        {
+            var overrideConf = await File.ReadAllTextAsync(Path.Combine(OverridesPath, id + ".json"));
+            var originConf = await File.ReadAllTextAsync(Path.Combine(ConfigsPath, id + ".json"));
+
+            return OverrideSecretProtector.Protect(overrideConf, originConf);
         }
     }
 }

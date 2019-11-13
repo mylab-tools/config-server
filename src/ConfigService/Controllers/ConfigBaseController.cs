@@ -1,22 +1,22 @@
-﻿using System.IO;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ConfigService.Models;
 using ConfigService.Services;
-using Microsoft.AspNetCore.Identity.UI.V3.Pages.Internal.Account;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ConfigService.Controllers
 {
-    [Route("configs")]
-    public class ConfigController : Controller
+    [Route("configs-base")]
+    public class ConfigBaseController : Controller
     {
         public IConfigProvider ConfigProvider { get; }
 
-        /// <summary>
-        /// Initializes a new instance of <see cref="ConfigController"/>
-        /// </summary>
-        public ConfigController(IConfigProvider configProvider)
+            /// <summary>
+            /// Initializes a new instance of <see cref="ConfigBaseController"/>
+            /// </summary>
+            public ConfigBaseController(IConfigProvider configProvider)
         {
             ConfigProvider = configProvider;
         }
@@ -39,7 +39,7 @@ namespace ConfigService.Controllers
             var model = new ConfigViewModel
             {
                 Id = id,
-                Content = await ConfigProvider.LoadConfig(id, true, true)
+                Content = await ConfigProvider.LoadConfigBase(id)
             };
             return View(model);
         }

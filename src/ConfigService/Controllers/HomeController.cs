@@ -24,15 +24,7 @@ namespace ConfigService.Controllers
 
         public IActionResult Index()
         {
-            var configClients = ConfigProvider
-                .GetConfigList()
-                .Select(Path.GetFileNameWithoutExtension)
-                .OrderBy(n => n)
-                .ToArray();
-            return View(new ConfigStorageViewModel
-            {
-                Configs = configClients
-            });
+            return RedirectToAction("Index", "Config");
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

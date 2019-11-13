@@ -1,19 +1,5 @@
 ﻿@model ConfigService.Models.ConfigStorageViewModel
 @{
-    ViewData["Title"] = "Config list";
+    ViewData["Title"] = "Home";
 }
 
-<div class="container">
-    <div class="col-6 offset-3">
-        <p>
-            <ul class="list-group list-group-flush">
-                @foreach (var cfg in Model.Configs)
-                {
-                    <li class="list-group-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Config" asp-action="Index" asp-route-id="@cfg">@cfg</a>
-                    </li>
-                }
-            </ul>
-        </p>
-    </div>
-</div>

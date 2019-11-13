@@ -1,7 +1,7 @@
 ﻿@model ConfigService.Models.ConfigStorageViewModel
 
 @{
-    ViewBag.Title = "Config list";
+    ViewBag.Title = "Config base list";
     Layout = "_Layout";
 }
 
@@ -12,11 +12,10 @@
                 @foreach (var cfg in Model.Configs)
                 {
                     <li class="list-group-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Config" asp-action="Details" asp-route-id="@cfg">@cfg</a>
+                        <a class="nav-link text-dark" asp-area="" asp-controller="ConfigBase" asp-action="Details" asp-route-id="@cfg">@cfg</a>
                     </li>
                 }
             </ul>
         </p>
     </div>
 </div>
-

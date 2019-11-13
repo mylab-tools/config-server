@@ -1,0 +1,27 @@
+﻿@model ConfigService.Models.ConfigViewModel
+
+@{
+    ViewBag.Title = $"Config for '{Model.Id}'";
+    Layout = "_Layout";
+}
+
+@section Links
+{
+    <link rel="stylesheet"
+          href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/styles/default.min.css">
+}
+
+@section Scripts
+{
+
+    <script charset="UTF-8"
+            src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.9/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+}
+
+<div class="container">
+    <div class="col-8 offset-2">
+        <pre class="text-left"><code class="json">@Model.Content</code></pre>
+    </div>
+</div>
+

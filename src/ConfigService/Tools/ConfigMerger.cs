@@ -1,6 +1,5 @@
 ﻿using System.IO;
 using System.Linq;
-using System.Xml.Linq;
 using Newtonsoft.Json;
 
 namespace ConfigService.Tools
@@ -50,12 +49,6 @@ namespace ConfigService.Tools
                     ? Formatting.Indented
                     : Formatting.None, 
                 true);
-        }
-
-        class XElementDesc
-        {
-            public XElement Element { get; set; }
-            public string Path { get; set; }
         }
     }
 }

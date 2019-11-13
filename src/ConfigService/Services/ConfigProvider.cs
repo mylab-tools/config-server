@@ -17,7 +17,7 @@ namespace ConfigService.Services
     {
         string BasePath { get; }
 
-        private string ClientsPath { get; }
+        private string ConfigsPath { get; }
         private string OverridesPath { get; }
 
         /// <summary>
@@ -26,20 +26,20 @@ namespace ConfigService.Services
         public DefaultConfigProvider(string basePath)
         {
             BasePath = basePath;
-            ClientsPath = Path.Combine(basePath, "Clients");
+            ConfigsPath = Path.Combine(basePath, "Configs");
             OverridesPath = Path.Combine(basePath, "Overrides");
         }
 
         public IEnumerable<string> GetConfigList()
         {
             return Directory
-                .EnumerateFiles(ClientsPath, "*.json")
+                .EnumerateFiles(ConfigsPath, "*.json")
                 .Select(Path.GetFileNameWithoutExtension);
         }
 
         public async Task<string> LoadConfig(string id, bool hideSecrets, bool prettyJson)
         {
-            var originStr = await File.ReadAllTextAsync(Path.Combine(ClientsPath, id + ".json"));
+            var originStr = await File.ReadAllTextAsync(Path.Combine(ConfigsPath, id + ".json"));
 
             var overridePath = Path.Combine(OverridesPath, id + ".json");
             if (!File.Exists(overridePath))

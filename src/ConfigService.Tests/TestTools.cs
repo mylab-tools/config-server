@@ -23,7 +23,7 @@ namespace ConfigService.Tests
 
         static FooModel Load(bool hideSecrets)
         {
-            var basePath = Path.Combine(Directory.GetCurrentDirectory(), "ConfigFiles");
+            var basePath = Path.Combine(Directory.GetCurrentDirectory(), "Resources");
             var p = new DefaultConfigProvider(basePath);
             var str = p.LoadConfig("foo", hideSecrets, false).Result;
 

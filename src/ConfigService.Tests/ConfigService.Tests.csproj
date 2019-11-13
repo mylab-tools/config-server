@@ -7,23 +7,23 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="ConfigFiles\Clients\bar.json" />
-    <None Remove="ConfigFiles\Clients\foo.json" />
-    <None Remove="ConfigFiles\Overrides\foo.json" />
+    <None Remove="Resources\Configs\bar.json" />
+    <None Remove="Resources\Configs\foo.json" />
+    <None Remove="Resources\Overrides\foo.json" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="ConfigFiles\Clients\bar.json">
+    <Content Include="Resources\Configs\bar.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
-    <Content Include="ConfigFiles\Clients\foo.json">
+    <Content Include="Resources\Configs\foo.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
-    <Content Include="ConfigFiles\Overrides\foo.json">
+    <Content Include="Resources\Overrides\foo.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>

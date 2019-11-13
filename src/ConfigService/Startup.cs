@@ -36,7 +36,7 @@ namespace ConfigService
 
             var contentRoot = Path.Combine(
                 Configuration.GetValue<string>(WebHostDefaults.ContentRootKey),
-                "ConfigFiles");
+                "Resources");
             services.AddSingleton<IConfigProvider>(new DefaultConfigProvider(contentRoot));
 
 

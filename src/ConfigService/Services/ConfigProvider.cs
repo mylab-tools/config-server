@@ -10,7 +10,7 @@ namespace ConfigService.Services
     {
         IEnumerable<string> GetConfigList();
 
-        Task<string> LoadConfig(string id, bool hideSecrets);
+        Task<string> LoadConfig(string id, bool hideSecrets, bool prettyJson);
     }
 
     class DefaultConfigProvider : IConfigProvider
@@ -37,16 +37,23 @@ namespace ConfigService.Services
                 .Select(Path.GetFileNameWithoutExtension);
         }
 
-        public async Task<string> LoadConfig(string id, bool hideSecrets)
+        public async Task<string> LoadConfig(string id, bool hideSecrets, bool prettyJson)
         {
             var originStr = await File.ReadAllTextAsync(Path.Combine(ClientsPath, id + ".json"));
 
             var overridePath = Path.Combine(OverridesPath, id + ".json");
             if (!File.Exists(overridePath))
-                return originStr;
+            {
+                var pretty = JsonPrettyFormatter.JsonPrettify(originStr);
+                return pretty;
+            }
 
             var overridingStr = await File.ReadAllTextAsync(overridePath);
-            var merger = new ConfigMerger(hideSecrets);
+            var merger = new ConfigMerger
+            {
+                HideSecrets = hideSecrets,
+                PrettyJson = prettyJson
+            };
 
             return merger.Merge(originStr, overridingStr);
         }

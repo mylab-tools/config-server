@@ -7,15 +7,9 @@ namespace ConfigService.Tools
 {
     class ConfigMerger
     {
-        public bool HideSecrets { get; }
+        public bool HideSecrets { get; set; }
 
-        /// <summary>
-        /// Initializes a new instance of <see cref="ConfigMerger"/>
-        /// </summary>
-        public ConfigMerger(bool hideSecrets)
-        {
-            HideSecrets = hideSecrets;
-        }
+        public bool PrettyJson { get; set; }
 
         public string Merge(string originStr, string overridingStr)
         {
@@ -51,7 +45,11 @@ namespace ConfigService.Tools
                 }
             }
 
-            return JsonConvert.SerializeXNode(originXml, Formatting.None, true);
+            return JsonConvert.SerializeXNode(originXml, 
+                PrettyJson 
+                    ? Formatting.Indented
+                    : Formatting.None, 
+                true);
         }
 
         class XElementDesc

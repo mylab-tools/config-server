@@ -23,7 +23,7 @@ namespace ConfigService.Controllers
             var model = new ConfigViewModel
             {
                 Id = id,
-                Content = await ConfigProvider.LoadConfig(id, true)
+                Content = await ConfigProvider.LoadConfig(id, true, true)
             };
             return View(model);
         }

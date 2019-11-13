@@ -25,7 +25,7 @@ namespace ConfigService.Tests
         {
             var basePath = Path.Combine(Directory.GetCurrentDirectory(), "ConfigFiles");
             var p = new DefaultConfigProvider(basePath);
-            var str = p.LoadConfig("foo", hideSecrets).Result;
+            var str = p.LoadConfig("foo", hideSecrets, false).Result;
 
             return JsonConvert.DeserializeObject<FooModel>(str);
         }

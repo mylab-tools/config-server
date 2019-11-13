@@ -1,0 +1,7 @@
+{
+  "Rabbit": {
+    "Host": "rabbit.host.ru",
+    "Login": "login",
+    "Password": "[secret]"
+  } 
+}

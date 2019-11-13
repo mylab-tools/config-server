@@ -1,33 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
-using ConfigService.Services;
+﻿using System.Xml.Linq;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Schema;
 
 namespace ConfigService.Tests
 {
     static class TestTools
     {
-        private static readonly Lazy<FooModel> _foo;
-        private static readonly Lazy<FooModel> _fooWithoutSecret;
-        public static FooModel Foo => _foo.Value;
-        public static FooModel FooWithoutSecret => _fooWithoutSecret.Value;
-
-        static TestTools()
+        public static XDocument LoadXDoc(string jsonSrc)
         {
-            _foo = new Lazy<FooModel>( ()=> Load(false));
-            _fooWithoutSecret = new Lazy<FooModel>( ()=> Load(true));
+            return JsonConvert.DeserializeXNode(jsonSrc, "root");
         }
 
-        static FooModel Load(bool hideSecrets)
+        public static FooModel XDocToFoo(XDocument xDoc)
         {
-            var basePath = Path.Combine(Directory.GetCurrentDirectory(), "Resources");
-            var p = new DefaultConfigProvider(basePath);
-            var str = p.LoadConfig("foo", hideSecrets, false).Result;
-
-            return JsonConvert.DeserializeObject<FooModel>(str);
+            return JsonConvert.DeserializeObject<FooModel>(JsonConvert.SerializeXNode(xDoc, Formatting.None, true));
         }
     }
 }

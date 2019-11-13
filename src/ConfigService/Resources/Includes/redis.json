@@ -1,0 +1,7 @@
+{
+  "Redis": {
+    "Host": "redis.host.ru",
+    "DbIndex": "3",
+    "Password": "[secret]"
+  } 
+}

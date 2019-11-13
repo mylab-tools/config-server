@@ -31,7 +31,7 @@ namespace ConfigService.Tools
                 {
                     if (originElement.Value == ConfigConstants.SecretMarkerValue)
                     {
-                        e.Element.Value = ConfigConstants.SecretHideText;
+                        e.Element.Value = ConfigConstants.SpecifiedSecretHidingText;
                     }
                 }
             }

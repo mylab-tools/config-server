@@ -4,6 +4,10 @@
   "Redis": {
     "Password": "redis-password"
   },
+
+  "Rabbit": {
+    "Password": "rabbit-password"
+  },
   "InnerObject": {
     "Bar": "NewBarVal"
   }

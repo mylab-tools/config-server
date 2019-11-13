@@ -1,8 +1,10 @@
 {
+  //include: include-1
+  "IncludeConflict": "from-base-val",
   "FooParam": "FooVal",
   "ParamForOverride": "OldVal",
   "SecretParam": "[secret]",
   "InnerObject": {
-      "Bar" :  "BarVal" 
+    "Bar": "BarVal"
   }
 }

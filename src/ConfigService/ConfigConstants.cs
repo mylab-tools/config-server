@@ -2,7 +2,8 @@
 {
     static class ConfigConstants
     {
-        public const string SecretHideText = "[hidden secret]";
+        public const string SpecifiedSecretHidingText = "[hidden specified secret]";
+        public const string NotSpecifiedSecretHidingText = "[!!! NOT SPECIFIED SECRET !!!]";
         public const string SecretMarkerValue = "[secret]";
     }
 }

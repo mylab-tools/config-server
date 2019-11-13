@@ -1,8 +1,9 @@
 {
+  //include: complex
   "FooParam": "FooVal",
   "ParamForOverride": "OldVal",
   "SecretParam": "[secret]",
   "InnerObject": {
-      "Bar" :  "BarVal" 
+    "Bar": "BarVal"
   }
 }

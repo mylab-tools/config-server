@@ -10,10 +10,12 @@ namespace ConfigService.Services
     {
         IEnumerable<string> GetConfigList();
         IEnumerable<string> GetOverrideList();
+        IEnumerable<string> GetIncludeList();
 
         Task<string> LoadConfig(string id, bool hideSecrets, bool prettyJson);
         Task<string> LoadConfigBase(string id);
         Task<string> LoadOverride(string id);
+        Task<string> LoadInclude(string id);
     }
 
     class DefaultConfigProvider : IConfigProvider
@@ -22,6 +24,7 @@ namespace ConfigService.Services
 
         private string ConfigsPath { get; }
         private string OverridesPath { get; }
+        private string IncludePath { get; }
 
         /// <summary>
         /// Initializes a new instance of <see cref="DefaultConfigProvider"/>
@@ -31,6 +34,7 @@ namespace ConfigService.Services
             BasePath = basePath;
             ConfigsPath = Path.Combine(basePath, "Configs");
             OverridesPath = Path.Combine(basePath, "Overrides");
+            IncludePath = Path.Combine(basePath, "Includes");
         }
 
         public IEnumerable<string> GetConfigList()
@@ -47,25 +51,27 @@ namespace ConfigService.Services
                 .Select(Path.GetFileNameWithoutExtension);
         }
 
+        public IEnumerable<string> GetIncludeList()
+        {
+            return Directory
+                .EnumerateFiles(IncludePath, "*.json")
+                .Select(Path.GetFileNameWithoutExtension);
+        }
+
         public async Task<string> LoadConfig(string id, bool hideSecrets, bool prettyJson)
         {
             var originStr = await File.ReadAllTextAsync(Path.Combine(ConfigsPath, id + ".json"));
 
             var overridePath = Path.Combine(OverridesPath, id + ".json");
-            if (!File.Exists(overridePath))
-            {
-                var pretty = JsonPrettyFormatter.JsonPrettify(originStr);
-                return pretty;
-            }
-
-            var overridingStr = await File.ReadAllTextAsync(overridePath);
-            var merger = new ConfigMerger
+            var overridingStr = File.Exists(overridePath) ? await File.ReadAllTextAsync(overridePath) : null;
+            
+            var configBuilder = new ConfigBuilder(new DefaultIncludeProvider(IncludePath))
             {
                 HideSecrets = hideSecrets,
                 PrettyJson = prettyJson
             };
 
-            return merger.Merge(originStr, overridingStr);
+            return await configBuilder.Build(originStr, overridingStr);
         }
 
         public async Task<string> LoadConfigBase(string id)
@@ -80,6 +86,12 @@ namespace ConfigService.Services
             var originConf = await File.ReadAllTextAsync(Path.Combine(ConfigsPath, id + ".json"));
 
             return OverrideSecretProtector.Protect(overrideConf, originConf);
+        }
+
+        public async Task<string> LoadInclude(string id)
+        {
+            var str = await File.ReadAllTextAsync(Path.Combine(IncludePath, id + ".json"));
+            return JsonPrettyFormatter.JsonPrettify(str);
         }
     }
 }

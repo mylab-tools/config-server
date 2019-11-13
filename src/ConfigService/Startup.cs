@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using ConfigService.Services;
@@ -33,7 +34,9 @@ namespace ConfigService
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
-            var contentRoot = Configuration.GetValue<string>(WebHostDefaults.ContentRootKey);
+            var contentRoot = Path.Combine(
+                Configuration.GetValue<string>(WebHostDefaults.ContentRootKey),
+                "ConfigFiles");
             services.AddSingleton<IConfigProvider>(new DefaultConfigProvider(contentRoot));
 
 

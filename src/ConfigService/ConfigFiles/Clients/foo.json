@@ -1,0 +1,8 @@
+{
+  "FooParam": "FooVal",
+  "ParamForOverride": "OldVal",
+  "SecretParam": "[secret]",
+  "InnerObject": {
+      "Bar" :  "BarVal" 
+  }
+}

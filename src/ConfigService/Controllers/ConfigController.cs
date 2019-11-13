@@ -1,4 +1,5 @@
-﻿using ConfigService.Models;
+﻿using System.Threading.Tasks;
+using ConfigService.Models;
 using ConfigService.Services;
 using Microsoft.AspNetCore.Identity.UI.V3.Pages.Internal.Account;
 using Microsoft.AspNetCore.Mvc;
@@ -17,12 +18,12 @@ namespace ConfigService.Controllers
             ConfigProvider = configProvider;
         }
 
-        public IActionResult Index(string id)
+        public async Task<IActionResult> Index(string id)
         {
             var model = new ConfigViewModel
             {
                 Id = id,
-                Content = ConfigProvider.LoadConfig(id)
+                Content = await ConfigProvider.LoadConfig(id, true)
             };
             return View(model);
         }

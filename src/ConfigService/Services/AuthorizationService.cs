@@ -7,7 +7,7 @@ using Microsoft.Extensions.Options;
 
 namespace ConfigService.Services
 {
-    interface IAuthorizationService
+    public interface IAuthorizationService
     {
         bool Authorize(string login, string pass);
     }

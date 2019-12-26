@@ -8,7 +8,6 @@ namespace ConfigService.Tools
     class ConfigBuilder
     {
         public IIncludesProvider IncludesProvider { get; }
-        public bool HideSecrets { get; set; }
 
         public bool PrettyJson { get; set; }
 
@@ -29,7 +28,7 @@ namespace ConfigService.Tools
 
             if (overridingStr != null)
             {
-                var op = new OverrideProcessor(HideSecrets);
+                var op = new OverrideProcessor();
 
                 var overrideXml = JsonConvert.DeserializeXNode(overridingStr, "root");
                 op.Override(originXml, overrideXml);

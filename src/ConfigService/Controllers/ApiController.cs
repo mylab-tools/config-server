@@ -28,7 +28,7 @@ namespace ConfigService.Controllers
         [Authorize(AuthenticationSchemes = BasicAuthSchemaName.Name)]
         public async Task<IActionResult> Get()
         {
-            return Ok(await ConfigProvider.LoadConfig(Request.HttpContext.User.Identity.Name, true, true));
+            return Ok(await ConfigProvider.LoadConfig(Request.HttpContext.User.Identity.Name, true));
         }
 
         (string Login, string Pass) ExtractBasic(AuthenticationHeaderValue hValue)

@@ -1,9 +1,7 @@
-﻿using System.IO;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using ConfigService.Models;
 using ConfigService.Services;
-using Microsoft.AspNetCore.Identity.UI.V3.Pages.Internal.Account;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ConfigService.Controllers
@@ -39,7 +37,7 @@ namespace ConfigService.Controllers
             var model = new ConfigViewModel
             {
                 Id = id,
-                Content = await ConfigProvider.LoadConfig(id, true, true)
+                Content = await ConfigProvider.LoadConfigWithoutSecrets(id, true)
             };
             return View(model);
         }

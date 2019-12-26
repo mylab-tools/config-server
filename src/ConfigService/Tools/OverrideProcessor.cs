@@ -5,16 +5,6 @@ namespace ConfigService.Tools
 {
     class OverrideProcessor
     {
-        public bool HideSecrets { get; }
-
-        /// <summary>
-        /// Initializes a new instance of <see cref="OverrideProcessor"/>
-        /// </summary>
-        public OverrideProcessor(bool hideSecrets)
-        {
-            HideSecrets = hideSecrets;
-        }
-
         public void Override(XDocument originDoc, XDocument overrideDoc)
         {
             var originElements = originDoc
@@ -33,18 +23,8 @@ namespace ConfigService.Tools
 
             foreach (var e in originElements)
             {
-                bool isSecret = e.Element.Value == ConfigConstants.SecretMarkerValue && HideSecrets;
-                
                 if (overridingElements.TryGetValue(e.Path, out var overridingElement))
-                {
-                    e.Element.Value = !isSecret 
-                        ? overridingElement.Value : 
-                        ConfigConstants.SpecifiedSecretHidingText;
-                }
-                else if (isSecret)
-                {
-                    e.Element.Value = ConfigConstants.NotSpecifiedSecretHidingText;
-                }
+                    e.Element.Value = overridingElement.Value;
             }
         }
     }

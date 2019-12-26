@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using ConfigService.Services;
+using ConfigService.Services.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Xunit;
 
 namespace ConfigService.Tests

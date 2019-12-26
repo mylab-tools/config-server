@@ -4,9 +4,12 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using ConfigService.Services;
+using ConfigService.Services.Authorization;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -38,9 +41,14 @@ namespace ConfigService
                 Configuration.GetValue<string>(WebHostDefaults.ContentRootKey),
                 "Resources");
             services.AddSingleton<IConfigProvider>(new DefaultConfigProvider(contentRoot));
+            services.AddSingleton<IAuthorizationService>(new AuthorizationService(contentRoot));
 
+            services.AddAuthentication()
+                .AddScheme<AuthenticationSchemeOptions, DefaultBasicIdentityService>(
+                    BasicAuthSchemaName.Name, null);
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -4,7 +4,10 @@ using System.Text;
 using System.Threading.Tasks;
 using ConfigService.Models;
 using ConfigService.Services;
+using ConfigService.Services.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using IAuthorizationService = ConfigService.Services.Authorization.IAuthorizationService;
 
 namespace ConfigService.Controllers
 {
@@ -12,34 +15,20 @@ namespace ConfigService.Controllers
     public class ApiController : Controller
     {
         public IConfigProvider ConfigProvider { get; }
-        public IAuthorizationService AuthorizationService { get; }
 
         /// <summary>
         /// Initializes a new instance of <see cref="ApiController"/>
         /// </summary>
-        public ApiController(IConfigProvider configProvider, IAuthorizationService authorizationService)
+        public ApiController(IConfigProvider configProvider)
         {
             ConfigProvider = configProvider;
-            AuthorizationService = authorizationService;
         }
 
         [HttpGet]
+        [Authorize(AuthenticationSchemes = BasicAuthSchemaName.Name)]
         public async Task<IActionResult> Get()
         {
-            if (!Request.Headers.TryGetValue("Authorization", out var h))
-                return Unauthorized();
-
-            var authHeader = AuthenticationHeaderValue.Parse(h);
-
-            if (authHeader.Scheme != "Basic")
-                return Forbid("Basic");
-
-            var basic = ExtractBasic(authHeader);
-
-            if (!AuthorizationService.Authorize(basic.Login, basic.Pass))
-                return Forbid();
-
-            return Ok(await ConfigProvider.LoadConfig(basic.Login, true, true));
+            return Ok(await ConfigProvider.LoadConfig(Request.HttpContext.User.Identity.Name, true, true));
         }
 
         (string Login, string Pass) ExtractBasic(AuthenticationHeaderValue hValue)

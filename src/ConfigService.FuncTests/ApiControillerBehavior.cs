@@ -44,12 +44,12 @@ namespace ConfigService.FuncTests
             var resp = await client.GetAsync("api/config");
 
             //Assert
-            Assert.Equal(HttpStatusCode.Forbidden, resp.StatusCode);
+            Assert.Equal(HttpStatusCode.Unauthorized, resp.StatusCode);
         }
 
         [Theory]
         [InlineData(HttpStatusCode.OK, "right-pass")]
-        [InlineData(HttpStatusCode.Forbidden, "wrong-pass")]
+        [InlineData(HttpStatusCode.Unauthorized, "wrong-pass")]
         public async Task ShouldCheckBasicAuth(HttpStatusCode expectedStatusCode, string password)
         {
             //Arrange

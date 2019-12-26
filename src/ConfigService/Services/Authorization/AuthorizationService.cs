@@ -19,7 +19,7 @@ namespace ConfigService.Services.Authorization
         {
             _clients = new Lazy<Dictionary<string, string>>(() =>
             {
-                var strData = File.ReadAllText(Path.Combine(contentRoot, "client-list.json"));
+                var strData = File.ReadAllText(Path.Combine(contentRoot, "client.json"));
                 var objModel = JsonConvert.DeserializeObject<AuthorizationItem[]>(strData);
 
                 return objModel.ToDictionary(itm => itm.Login, itm => itm.Secret);

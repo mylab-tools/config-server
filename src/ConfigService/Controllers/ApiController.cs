@@ -30,13 +30,5 @@ namespace ConfigService.Controllers
         {
             return Ok(await ConfigProvider.LoadConfig(Request.HttpContext.User.Identity.Name, true));
         }
-
-        (string Login, string Pass) ExtractBasic(AuthenticationHeaderValue hValue)
-        {
-            var credentialBytes = Convert.FromBase64String(hValue.Parameter);
-            var credentials = Encoding.UTF8.GetString(credentialBytes).Split(new[] { ':' },2);
-
-            return (credentials[0], credentials[1]);
-        }
     }
 }

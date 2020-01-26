@@ -5,6 +5,10 @@
     <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DefineConstants>TRACE;DEBUG;DEV</DefineConstants>
+  </PropertyGroup>
+
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.App" />

@@ -60,6 +60,9 @@ namespace MyLab.ConfigServer.Tools
             foreach (var id in includeIds)
             {
                 var includeContent = await IncludesProvider.GetInclude(id);
+                if(includeContent == null)
+                    continue;
+
                 var xDoc = JsonConvert.DeserializeXNode(includeContent, "root");
 
                 await ResolveIncludes(xDoc, deepCount + 1);

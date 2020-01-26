@@ -39,6 +39,9 @@ namespace MyLab.ConfigServer.Services
 
         public IEnumerable<string> GetConfigList()
         {
+            if (!Directory.Exists(ConfigsPath))
+                return Enumerable.Empty<string>();
+
             return Directory
                 .EnumerateFiles(ConfigsPath, "*.json")
                 .Select(Path.GetFileNameWithoutExtension);
@@ -46,6 +49,9 @@ namespace MyLab.ConfigServer.Services
 
         public IEnumerable<string> GetOverrideList()
         {
+            if (!Directory.Exists(OverridesPath))
+                return Enumerable.Empty<string>();
+
             return Directory
                 .EnumerateFiles(OverridesPath, "*.json")
                 .Select(Path.GetFileNameWithoutExtension);
@@ -53,6 +59,9 @@ namespace MyLab.ConfigServer.Services
 
         public IEnumerable<string> GetIncludeList()
         {
+            if (!Directory.Exists(IncludePath))
+                return Enumerable.Empty<string>();
+
             return Directory
                 .EnumerateFiles(IncludePath, "*.json")
                 .Select(Path.GetFileNameWithoutExtension);
@@ -61,8 +70,11 @@ namespace MyLab.ConfigServer.Services
         public async Task<string> LoadConfig(string id, bool prettyJson)
         {
             var confWithUnresolvedSecrets = await LoadConfigCore(id, prettyJson, true);
-            var secretApplier = await SecretApplier.FromFileAsync(SecretPath);
 
+            if (!File.Exists(SecretPath))
+                return confWithUnresolvedSecrets;
+
+            var secretApplier = await SecretApplier.FromFileAsync(SecretPath);
             return secretApplier.ApplySecrets(confWithUnresolvedSecrets);
         }
 

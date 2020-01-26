@@ -39,7 +39,12 @@ namespace ConfigService
 
             var contentRoot = Path.Combine(
                 Configuration.GetValue<string>(WebHostDefaults.ContentRootKey),
-                "Resources");
+#if DEV
+                    "DevResources"
+#else
+                    "Resources"
+#endif
+                );
             services.AddSingleton<IConfigProvider>(new DefaultConfigProvider(contentRoot));
             services.AddSingleton<IAuthorizationService>(new AuthorizationService(contentRoot));
 

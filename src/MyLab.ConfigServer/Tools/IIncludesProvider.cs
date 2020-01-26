@@ -22,7 +22,9 @@ namespace MyLab.ConfigServer.Tools
         public async Task<string> GetInclude(string id)
         {
             var filePath = Path.Combine(BasePath, id + ".json");
-            return await File.ReadAllTextAsync(filePath);
+            return File.Exists(filePath) ? 
+                await File.ReadAllTextAsync(filePath) :
+                await Task.FromResult<string>(null);
         }
     }
 }

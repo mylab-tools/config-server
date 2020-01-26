@@ -9,11 +9,21 @@
     <div class="col-6 offset-3">
         <p>
             <ul class="list-group list-group-flush">
-                @foreach (var cfg in Model.Configs)
+                @if (Model.Configs != null && Model.Configs.Length != 0)
                 {
-                    <li class="list-group-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Include" asp-action="Details" asp-route-id="@cfg">@cfg</a>
-                    </li>
+                    @foreach (var cfg in Model.Configs)
+                    {
+                        <li class="list-group-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Include" asp-action="Details" asp-route-id="@cfg">@cfg</a>
+                        </li>
+                    }
+                }
+                else
+                {
+                    <div class="alert alert-warning" role="alert">
+                        <p class="font-weight-bold">Warning!</p>
+                        <p>No include files was found</p>
+                    </div>
                 }
             </ul>
         </p>

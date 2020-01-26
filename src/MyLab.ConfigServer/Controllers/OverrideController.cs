@@ -39,7 +39,7 @@ namespace MyLab.ConfigServer.Controllers
                 var model = new ConfigViewModel
                 {
                     Id = id,
-                    Content = await ConfigProvider.LoadOverride(id)
+                    ConfigInfo = await ConfigProvider.LoadOverride(id)
                 };
                 return View(model);
             }

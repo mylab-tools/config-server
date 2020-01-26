@@ -13,8 +13,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using MyLab.ConfigServer.Tools;
 
-namespace ConfigService
+namespace MyLab.ConfigServer
 {
     public class Startup
     {
@@ -45,7 +46,13 @@ namespace ConfigService
                     "Resources"
 #endif
                 );
-            services.AddSingleton<IConfigProvider>(new DefaultConfigProvider(contentRoot));
+
+            var secretsFilePath = Path.Combine(contentRoot, "secrets.json");
+            var secretsProvider = DefaultSecretsProvider.LoadFromFile(secretsFilePath);
+            var secretsApplier = new SecretApplier(secretsProvider);
+            var secretAnalyzer = new SecretsAnalyzer(secretsProvider);
+
+            services.AddSingleton<IConfigProvider>(new DefaultConfigProvider(contentRoot, secretsApplier, secretAnalyzer));
             services.AddSingleton<IAuthorizationService>(new AuthorizationService(contentRoot));
 
             services.AddAuthentication()

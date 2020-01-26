@@ -39,7 +39,7 @@ namespace MyLab.ConfigServer.Controllers
             var model = new ConfigViewModel
             {
                 Id = id,
-                Content = await ConfigProvider.LoadInclude(id)
+                ConfigInfo = await ConfigProvider.LoadInclude(id)
             };
             return View(model);
         }

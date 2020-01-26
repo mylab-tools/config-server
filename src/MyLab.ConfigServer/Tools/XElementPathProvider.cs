@@ -16,7 +16,7 @@ namespace MyLab.ConfigServer.Tools
         {
             var parent = xElement.Parent;
 
-            if (parent == null)
+            if (parent?.Parent == null)
             {
                 sb.Insert(0, "/");
                 return;

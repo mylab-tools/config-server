@@ -37,7 +37,7 @@ namespace MyLab.ConfigServer.Controllers
             var model = new ConfigViewModel
             {
                 Id = id,
-                Content = await ConfigProvider.LoadConfigWithoutSecrets(id, true)
+                ConfigInfo = await ConfigProvider.LoadConfigWithoutSecrets(id, true)
             };
             return View(model);
         }

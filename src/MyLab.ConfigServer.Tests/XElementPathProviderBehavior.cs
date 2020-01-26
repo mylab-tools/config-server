@@ -22,7 +22,7 @@ namespace MyLab.ConfigServer.Tests
             var path = XElementPathProvider.Provide(innerNode);
 
             //Assert
-            Assert.Equal("/root/node1/node2", path);
+            Assert.Equal("/node1/node2", path);
         }
     }
 }

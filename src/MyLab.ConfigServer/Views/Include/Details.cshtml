@@ -21,7 +21,10 @@
 
 <div class="container">
     <div class="col-8 offset-2">
-        <pre class="text-left"><code class="json">@Model.Content</code></pre>
+        <pre class="text-left"><code class="json">@Model.ConfigInfo.Content</code></pre>
+    </div>
+    <div class="col-8 offset-2">
+        @await Html.PartialAsync("_SecretsReport", Model)
     </div>
 </div>
 

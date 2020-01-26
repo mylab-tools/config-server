@@ -28,7 +28,8 @@ namespace MyLab.ConfigServer.Controllers
         [Authorize(AuthenticationSchemes = BasicAuthSchemaName.Name)]
         public async Task<IActionResult> Get()
         {
-            return Ok(await ConfigProvider.LoadConfig(Request.HttpContext.User.Identity.Name, true));
+            var config = await ConfigProvider.LoadConfig(Request.HttpContext.User.Identity.Name, true);
+            return Ok(config.Content);
         }
     }
 }

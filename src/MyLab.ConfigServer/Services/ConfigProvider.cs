@@ -12,29 +12,40 @@ namespace MyLab.ConfigServer.Services
         IEnumerable<string> GetOverrideList();
         IEnumerable<string> GetIncludeList();
 
-        Task<string> LoadConfig(string id, bool prettyJson);
-        Task<string> LoadConfigWithoutSecrets(string id, bool prettyJson);
-        Task<string> LoadConfigBase(string id);
-        Task<string> LoadOverride(string id);
-        Task<string> LoadInclude(string id);
+        Task<ConfigInfo> LoadConfig(string id, bool prettyJson);
+        Task<ConfigInfo> LoadConfigWithoutSecrets(string id, bool prettyJson);
+        Task<ConfigInfo> LoadConfigBase(string id);
+        Task<ConfigInfo> LoadOverride(string id);
+        Task<ConfigInfo> LoadInclude(string id);
+    }
+
+    public class ConfigInfo
+    {
+        public string Content { get; set; }
+        public ConfigSecret[] Secrets { get; set; }
     }
 
     class DefaultConfigProvider : IConfigProvider
     {
+        private readonly SecretApplier _secretApplier;
+        private readonly SecretsAnalyzer _secretsAnalyzer;
         private string ConfigsPath { get; }
         private string OverridesPath { get; }
         private string IncludePath { get; }
-        private string SecretPath { get; }
 
         /// <summary>
         /// Initializes a new instance of <see cref="DefaultConfigProvider"/>
         /// </summary>
-        public DefaultConfigProvider(string basePath)
+        public DefaultConfigProvider(
+            string basePath, 
+            SecretApplier secretApplier,
+            SecretsAnalyzer secretsAnalyzer)
         {
+            _secretApplier = secretApplier;
+            _secretsAnalyzer = secretsAnalyzer;
             ConfigsPath = Path.Combine(basePath, "Configs");
             OverridesPath = Path.Combine(basePath, "Overrides");
             IncludePath = Path.Combine(basePath, "Includes");
-            SecretPath = Path.Combine(basePath, "secrets.json");
         }
 
         public IEnumerable<string> GetConfigList()
@@ -67,41 +78,67 @@ namespace MyLab.ConfigServer.Services
                 .Select(Path.GetFileNameWithoutExtension);
         }
 
-        public async Task<string> LoadConfig(string id, bool prettyJson)
+        public async Task<ConfigInfo> LoadConfig(string id, bool prettyJson)
         {
-            var confWithUnresolvedSecrets = await LoadConfigCore(id, prettyJson, true);
+            var confWithUnresolvedSecrets = await LoadConfigCore(id, prettyJson);
 
-            if (!File.Exists(SecretPath))
-                return confWithUnresolvedSecrets;
+            var config = _secretApplier.ApplySecrets(confWithUnresolvedSecrets);
 
-            var secretApplier = await SecretApplier.FromFileAsync(SecretPath);
-            return secretApplier.ApplySecrets(confWithUnresolvedSecrets);
+            return new ConfigInfo
+            {
+                Secrets = _secretsAnalyzer.GetSecrets(config).ToArray(),
+                Content = config
+            };
         }
 
-        public async Task<string> LoadConfigWithoutSecrets(string id, bool prettyJson)
+        public async Task<ConfigInfo> LoadConfigWithoutSecrets(string id, bool prettyJson)
         {
-            return await LoadConfigCore(id, prettyJson, false);
+            var config = await LoadConfigCore(id, prettyJson);
+
+            return new ConfigInfo
+            {
+                Secrets = _secretsAnalyzer.GetSecrets(config).ToArray(),
+                Content = config
+            };
         }
 
-        public async Task<string> LoadConfigBase(string id)
+        public async Task<ConfigInfo> LoadConfigBase(string id)
         {
             var str = await File.ReadAllTextAsync(Path.Combine(ConfigsPath, id + ".json"));
-            return JsonPrettyFormatter.JsonPrettify(str);
+            var config = JsonPrettyFormatter.JsonPrettify(str);
+
+            return new ConfigInfo
+            {
+                Secrets = _secretsAnalyzer.GetSecrets(config).ToArray(),
+                Content = config
+            };
         }
 
-        public async Task<string> LoadOverride(string id)
+        public async Task<ConfigInfo> LoadOverride(string id)
         {
             var str = await File.ReadAllTextAsync(Path.Combine(OverridesPath, id + ".json"));
-            return JsonPrettyFormatter.JsonPrettify(str);
+            var config = JsonPrettyFormatter.JsonPrettify(str);
+
+            return new ConfigInfo
+            {
+                Secrets = _secretsAnalyzer.GetSecrets(config).ToArray(),
+                Content = config
+            };
         }
 
-        public async Task<string> LoadInclude(string id)
+        public async Task<ConfigInfo> LoadInclude(string id)
         {
             var str = await File.ReadAllTextAsync(Path.Combine(IncludePath, id + ".json"));
-            return JsonPrettyFormatter.JsonPrettify(str);
+            var config = JsonPrettyFormatter.JsonPrettify(str);
+
+            return new ConfigInfo
+            {
+                Secrets = _secretsAnalyzer.GetSecrets(config).ToArray(),
+                Content = config
+            };
         }
 
-        public async Task<string> LoadConfigCore(string id, bool prettyJson, bool withSecrets)
+        public async Task<string> LoadConfigCore(string id, bool prettyJson)
         {
             var originStr = await File.ReadAllTextAsync(Path.Combine(ConfigsPath, id + ".json"));
 

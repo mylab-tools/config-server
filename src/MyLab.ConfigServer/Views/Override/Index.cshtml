@@ -1,0 +1,31 @@
+﻿@model MyLab.ConfigServer.Models.ConfigStorageViewModel
+
+@{
+    ViewBag.Title = "Overrides";
+    Layout = "_Layout";
+}
+
+    <div class="container">
+        <div class="col-6 offset-3">
+            <p>
+                <ul class="list-group list-group-flush">
+                    @if (Model.Configs != null && Model.Configs.Length != 0)
+                    {
+                        @foreach (var cfg in Model.Configs)
+                        {
+                            <li class="list-group-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Override" asp-action="Details" asp-route-id="@cfg">@cfg</a>
+                            </li>
+                        }
+                    }
+                    else
+                    {
+                        <div class="alert alert-warning" role="alert">
+                            <p class="font-weight-bold">Warning!</p>
+                            <p>No override files was found</p>
+                        </div>
+        }
+                    </ul>
+                    </p>
+                </div>
+</div>

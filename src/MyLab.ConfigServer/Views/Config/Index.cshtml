@@ -1,0 +1,32 @@
+﻿@model MyLab.ConfigServer.Models.ConfigStorageViewModel
+
+@{
+    ViewBag.Title = "Configurations";
+    Layout = "_Layout";
+}
+
+    <div class="container">
+        <div class="col-6 offset-3">
+            <p>
+                @if (Model.Configs != null && Model.Configs.Length != 0)
+                {
+                    <ul class="list-group list-group-flush">
+                        @foreach (var cfg in Model.Configs)
+                        {
+                            <li class="list-group-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Config" asp-action="Details" asp-route-id="@cfg">@cfg</a>
+                            </li>
+                        }
+                    </ul>
+                }
+                else
+                {
+                    <div class="alert alert-warning" role="alert">
+                        <p class="font-weight-bold">Warning!</p>
+                        <p>No configurations was found</p>
+                    </div>
+        }
+                </p>
+            </div>
+</div>
+

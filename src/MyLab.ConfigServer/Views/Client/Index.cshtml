@@ -1,0 +1,29 @@
+﻿@model ClientsStorageViewModel
+
+@{
+    ViewData["Title"] = "Clients";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container">
+    <div class="col-6 offset-3">
+        <p>
+            @if (Model.Clients != null && Model.Clients.Length != 0)
+            {
+                <ul class="list-group list-group-flush">
+                    @foreach (var cl in Model.Clients)
+                    {
+                        <li class="list-group-item">@cl</li>
+                    }
+                </ul>
+            }
+            else
+            {
+                <div class="alert alert-warning" role="alert">
+                    <p class="font-weight-bold">Warning!</p>
+                    <p>No registered clients was found</p>
+                </div>
+            }
+        </p>
+    </div>
+</div>

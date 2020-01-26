@@ -53,7 +53,13 @@ namespace MyLab.ConfigServer
             var secretAnalyzer = new SecretsAnalyzer(secretsProvider);
 
             services.AddSingleton<IConfigProvider>(new DefaultConfigProvider(contentRoot, secretsApplier, secretAnalyzer));
-            services.AddSingleton<IAuthorizationService>(new AuthorizationService(contentRoot));
+
+            var clientsFile = Path.Combine(contentRoot, "clients.json");
+            var clientsProvider = DefaultClientsProvider.LoadFromFile(clientsFile);
+
+            services.AddSingleton<IClientsProvider>(clientsProvider);
+            services.AddSingleton<IAuthorizationService>(new AuthorizationService(clientsProvider));
+
 
             services.AddAuthentication()
                 .AddScheme<AuthenticationSchemeOptions, DefaultBasicIdentityService>(

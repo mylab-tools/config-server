@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.Collections.Generic;
 using System.Linq;
-using Newtonsoft.Json;
 
 namespace MyLab.ConfigServer.Services.Authorization
 {
@@ -13,28 +10,16 @@ namespace MyLab.ConfigServer.Services.Authorization
 
     class AuthorizationService : IAuthorizationService
     {
-        private readonly Lazy<Dictionary<string, string>> _clients;
+        private readonly Dictionary<string, string> _clients;
 
-        public AuthorizationService(string contentRoot)
+        public AuthorizationService(IClientsProvider clientsProvider)
         {
-            _clients = new Lazy<Dictionary<string, string>>(() =>
-            {
-                var strData = File.ReadAllText(Path.Combine(contentRoot, "client.json"));
-                var objModel = JsonConvert.DeserializeObject<AuthorizationItem[]>(strData);
-
-                return objModel.ToDictionary(itm => itm.Login, itm => itm.Secret);
-            });
+            _clients = clientsProvider.Provide().ToDictionary(ii => ii.Login, ii => ii.Secret);
         }
 
         public bool Authorize(string login, string pass)
         {
-            return _clients.Value.TryGetValue(login, out var secret) && secret == pass;
+            return _clients.TryGetValue(login, out var secret) && secret == pass;
         }
-    }
-
-    class AuthorizationItem
-    {
-        public string Login { get; set; }
-        public string Secret { get; set; }
     }
 }

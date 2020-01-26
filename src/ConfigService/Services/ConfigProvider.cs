@@ -24,6 +24,7 @@ namespace ConfigService.Services
         private string ConfigsPath { get; }
         private string OverridesPath { get; }
         private string IncludePath { get; }
+        private string SecretPath { get; }
 
         /// <summary>
         /// Initializes a new instance of <see cref="DefaultConfigProvider"/>
@@ -33,6 +34,7 @@ namespace ConfigService.Services
             ConfigsPath = Path.Combine(basePath, "Configs");
             OverridesPath = Path.Combine(basePath, "Overrides");
             IncludePath = Path.Combine(basePath, "Includes");
+            SecretPath = Path.Combine(basePath, "secrets.json");
         }
 
         public IEnumerable<string> GetConfigList()
@@ -58,7 +60,10 @@ namespace ConfigService.Services
 
         public async Task<string> LoadConfig(string id, bool prettyJson)
         {
-            return await LoadConfigCore(id, prettyJson, true);
+            var confWithUnresolvedSecrets = await LoadConfigCore(id, prettyJson, true);
+            var secretApplier = await SecretApplier.FromFileAsync(SecretPath);
+
+            return secretApplier.ApplySecrets(confWithUnresolvedSecrets);
         }
 
         public async Task<string> LoadConfigWithoutSecrets(string id, bool prettyJson)

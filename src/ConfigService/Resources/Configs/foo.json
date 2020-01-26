@@ -2,7 +2,7 @@
   //include: complex
   "FooParam": "FooVal",
   "ParamForOverride": "OldVal",
-  "SecretParam": "[secret]",
+  "SecretParam": "[secret:some-secret]",
   "InnerObject": {
     "Bar": "BarVal"
   }

@@ -1,13 +1,6 @@
 {
   "ParamForOverride": "NewVal",
   "SecretParam": "this is a secret",
-  "Redis": {
-    "Password": "redis-password"
-  },
-
-  "Rabbit": {
-    "Password": "rabbit-password"
-  },
   "InnerObject": {
     "Bar": "NewBarVal"
   }

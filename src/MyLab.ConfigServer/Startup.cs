@@ -13,7 +13,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using MyLab.ConfigServer.Tools;
+using MyLab.Syslog;
 
 namespace MyLab.ConfigServer
 {
@@ -67,13 +69,17 @@ namespace MyLab.ConfigServer
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
+
+            services.Configure<SyslogLoggerOptions>(Configuration.GetSection("Logging:Syslog"));
+            services.AddLogging(b => b
+                .AddSyslog()
+                .AddConsole());
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-           // CurrentEnvironment = env;
-
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -85,6 +91,12 @@ namespace MyLab.ConfigServer
 
             app.UseStaticFiles();
             app.UseCookiePolicy();
+
+            app.Use((ctx, next) =>
+            {
+                ctx.Request.PathBase = Configuration["BaseAddress"];
+                return next();
+            });
 
             app.UseMvc(routes =>
             {

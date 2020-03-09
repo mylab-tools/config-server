@@ -19,6 +19,11 @@ namespace MyLab.ConfigServer
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
+                .ConfigureAppConfiguration((context, builder) =>
+                {
+                    builder.AddJsonFile("appsettings.json", true);
+                    builder.AddEnvironmentVariables("CFG_");
+                })
                 .UseStartup<Startup>();
     }
 }

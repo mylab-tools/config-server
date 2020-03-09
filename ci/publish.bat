@@ -3,7 +3,7 @@ echo off
 IF [%1]==[] goto noparam
 
 echo "Build project ..."
-dotnet publish ..\src\MyLab.ConfigServer\MyLab.ConfigServer.proj -r Release -o .\out\app
+dotnet publish ..\src\MyLab.ConfigServer\MyLab.ConfigServer.csproj -c Release -o .\out\app
 
 echo "Build image '%1' and 'latest'..."
 docker build -t ozzyext/mylab-config-server:%1 -t ozzyext/mylab-config-server:latest .

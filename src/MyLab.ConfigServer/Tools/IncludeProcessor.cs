@@ -30,33 +30,17 @@ namespace MyLab.ConfigServer.Tools
         async Task ResolveIncludes(XDocument doc, int deepCount)
         {
             if (deepCount >= MaxDeep) return;
-
-            var originElementsNames = doc.Root == null
-              ? Array.Empty<string>()
-              : doc.Root
-                .Nodes()
-                .OfType<XElement>()
-                .Select(e => e.Name.LocalName)
-                .ToArray();
-
+            
             var containerElement = doc.Root != null ? (XContainer)doc.Root : doc;
 
             var includeNodes = containerElement
                 .Nodes()
                 .OfType<XComment>()
+                .Where(c => c.Value.StartsWith("include:"))
                 .ToArray();
             var includeIds = includeNodes
-                .Select(n => new 
-                    {
-                        n.Value, 
-                        SeparatorIndex = n.Value.IndexOf(":")
-                    }
-                )
-                .Where(c => c.SeparatorIndex > 0 && c.SeparatorIndex < c.Value.Length-1)
-                .Select(c => c.Value.Substring(c.SeparatorIndex + 1).Trim());
-
-            var elementToInsert = new List<XElement>();
-
+                .Select(c => c.Value.Substring(8).Trim());
+            
             foreach (var id in includeIds)
             {
                 var includeContent = await IncludesProvider.GetInclude(id);
@@ -69,20 +53,49 @@ namespace MyLab.ConfigServer.Tools
 
                 if (xDoc.Root != null)
                 {
-                    foreach (var node in xDoc.Root.Nodes().OfType<XElement>())
+                    foreach (var d in xDoc.Root
+                        .Descendants()
+                        .Where(e => !e.HasElements && e != xDoc.Root))
                     {
-                        if (!originElementsNames.Contains(node.Name.LocalName))
-                        {
-                            elementToInsert.Add(node);
-                        }
+                        var elementPath = new List<XElement>();
+                        GetElementPath(d, elementPath);
+
+                        var newElement = BuildPathElements(doc, elementPath);
+                        
+                        if(string.IsNullOrEmpty(newElement.Value))
+                            newElement.Value = d.Value;
                     }
                 }
             }
 
             foreach (var includeNode in includeNodes)
                 includeNode.Remove();
-            foreach (var elToInsert in elementToInsert)
-                containerElement.Add(elToInsert);
+        }
+
+        XElement BuildPathElements(XContainer root, IEnumerable<XElement> path)
+        {
+            XContainer parentContainer = root;
+            XElement pathItemElement = null;
+            foreach (var pe in path)
+            {
+                pathItemElement = parentContainer.Elements().FirstOrDefault(e => e.Name.LocalName == pe.Name.LocalName);
+                if (pathItemElement == null)
+                {
+                    pathItemElement = new XElement(pe.Name);
+                    parentContainer.Add(pathItemElement);
+                }
+
+                parentContainer = pathItemElement;
+            }
+
+            return pathItemElement;
+        }
+
+        void GetElementPath(XElement endElement, List<XElement> elements)
+        {
+            elements.Insert(0, endElement);
+            if(endElement.Parent != null)
+                GetElementPath(endElement.Parent, elements);
         }
     }
 }

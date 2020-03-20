@@ -175,3 +175,7 @@ Date: Thu, 19 Mar 2020 15:13:50 GMT
 
 ![web-config-example](./doc/web-config-example.png)
 
+## PS
+
+Клиент для загрузки удалённой конфигурации под .NET Core - [MyLab.RemoteConfig](https://github.com/ozzy-ext-mylab/remote-config).
+

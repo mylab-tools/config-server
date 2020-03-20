@@ -1,6 +1,6 @@
 # MyLab.ConfigServer
 
-[![Docker image](https://img.shields.io/docker/v/ozzyext/mylab-config-server)](https://hub.docker.com/r/ozzyext/mylab-config-server)
+[![Docker image](https://img.shields.io/docker/v/ozzyext/mylab-config-server?sort=semver)](https://hub.docker.com/r/ozzyext/mylab-config-server)
 
 Веб-приложение, предоставляющее доступ к конфигурационным данным по протоколу `HTTP`.
 

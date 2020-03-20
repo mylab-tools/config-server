@@ -51,8 +51,7 @@ Date: Thu, 19 Mar 2020 15:13:50 GMT
 ```
 
 ## Сборка конфигураций
-![](.\doc\my-lab-config-server.png)
-
+![](./doc/my-lab-config-server.png)
 
 
 На схеме выше описан процесс формирования конфигурации на тестовом примере:
@@ -153,7 +152,7 @@ Date: Thu, 19 Mar 2020 15:13:50 GMT
 
 Конфигурационный сервер имеет веб-интерфейс.
 
-![](.\doc\main-web-page.png)
+![](./doc/main-web-page.png)
 
 Каждый раздел веб-интерфейса состоит из следующих частей:
 
@@ -174,5 +173,5 @@ Date: Thu, 19 Mar 2020 15:13:50 GMT
 3. Отметка о том, определён ли найденный секрет в файле `secrets.json`;
 4. Путь секрета в приведённой конфигурации.
 
-![web-config-example](.\doc\web-config-example.png)
+![web-config-example](./doc/web-config-example.png)
 

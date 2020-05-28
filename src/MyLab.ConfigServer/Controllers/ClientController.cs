@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Threading.Tasks;
 using MyLab.ConfigServer.Models;
 using Microsoft.AspNetCore.Mvc;
 using MyLab.ConfigServer.Services.Authorization;
@@ -18,12 +19,13 @@ namespace MyLab.ConfigServer.Controllers
             ClientsProvider = clientsProvider;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
+            var authItems = await ClientsProvider.ProvideAsync();
+
             return View(new ClientsStorageViewModel
             {
-                Clients = ClientsProvider
-                    .Provide()
+                Clients = authItems
                     .Select(ii => ii.Login)
                     .ToArray()
             });

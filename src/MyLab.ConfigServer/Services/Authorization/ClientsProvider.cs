@@ -1,13 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
 
 namespace MyLab.ConfigServer.Services.Authorization
 {
     public interface IClientsProvider
     {
-        IEnumerable<AuthorizationItem> Provide();
+        Task<IEnumerable<AuthorizationItem>> ProvideAsync();
     }
     public class AuthorizationItem
     {
@@ -15,29 +17,37 @@ namespace MyLab.ConfigServer.Services.Authorization
         public string Secret { get; set; }
     }
 
-    class DefaultClientsProvider : IClientsProvider
+    class FileBasedClientsProvider : IClientsProvider
     {
-        private readonly string _json;
+        private readonly string _filename;
+        private AuthorizationItem[] _data;
+        private DateTime _lastUpdate;
 
-        public DefaultClientsProvider(string json)
+        public FileBasedClientsProvider(string filename)
         {
-            _json = json;
+            _filename = filename;
         }
 
-        public static DefaultClientsProvider LoadFromFile(string filePath)
+        public async Task<IEnumerable<AuthorizationItem>> ProvideAsync()
         {
-            return new DefaultClientsProvider(
-                File.Exists(filePath)
-                    ? File.ReadAllText(filePath)
-                    : null
-            );
-        }
+            var file = new FileInfo(_filename);
 
-        public IEnumerable<AuthorizationItem> Provide()
-        {
-            return _json != null
-                ? JsonConvert.DeserializeObject<AuthorizationItem[]>(_json)
-                : Enumerable.Empty<AuthorizationItem>();
+            if (file.Exists)
+            {
+                if (file.LastWriteTime > _lastUpdate)
+                {
+                    using (var strm = file.OpenRead())
+                    using (var rdr = new StreamReader(strm))
+                    {
+                        var json = await rdr.ReadToEndAsync();
+                     
+                        _data = JsonConvert.DeserializeObject<AuthorizationItem[]>(json);
+                        _lastUpdate = DateTime.Now;
+                    }
+                }
+            }
+            
+            return _data;
         }
     }
 }

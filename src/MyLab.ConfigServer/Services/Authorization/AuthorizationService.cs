@@ -1,25 +1,27 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace MyLab.ConfigServer.Services.Authorization
 {
     public interface IAuthorizationService
     {
-        bool Authorize(string login, string pass);
+        Task<bool> AuthorizeAsync(string login, string pass);
     }
 
     class AuthorizationService : IAuthorizationService
     {
-        private readonly Dictionary<string, string> _clients;
+        private readonly IClientsProvider _clientsProvider;
 
         public AuthorizationService(IClientsProvider clientsProvider)
         {
-            _clients = clientsProvider.Provide().ToDictionary(ii => ii.Login, ii => ii.Secret);
+            _clientsProvider = clientsProvider;
         }
 
-        public bool Authorize(string login, string pass)
+        public async Task<bool> AuthorizeAsync(string login, string pass)
         {
-            return _clients.TryGetValue(login, out var secret) && secret == pass;
+            var itms = await _clientsProvider.ProvideAsync();
+            return itms.Any(itm => itm.Login == login && itm.Secret == pass);
         }
     }
 }

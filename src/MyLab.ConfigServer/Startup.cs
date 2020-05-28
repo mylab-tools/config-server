@@ -57,7 +57,7 @@ namespace MyLab.ConfigServer
             services.AddSingleton<IConfigProvider>(new DefaultConfigProvider(contentRoot, secretsApplier, secretAnalyzer));
 
             var clientsFile = Path.Combine(contentRoot, "clients.json");
-            var clientsProvider = DefaultClientsProvider.LoadFromFile(clientsFile);
+            var clientsProvider = new FileBasedClientsProvider(clientsFile);
 
             services.AddSingleton<IClientsProvider>(clientsProvider);
             services.AddSingleton<IAuthorizationService>(new AuthorizationService(clientsProvider));

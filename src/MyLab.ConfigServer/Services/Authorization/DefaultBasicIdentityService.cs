@@ -25,10 +25,10 @@ namespace MyLab.ConfigServer.Services.Authorization
             _authorizationService = authorizationService;
         }
 
-        protected override Task<AuthenticateResult> HandleAuthenticateAsync()
+        protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
         {
             if (!Request.Headers.ContainsKey("Authorization"))
-                return Task.FromResult(AuthenticateResult.Fail("Missing Authorization Header"));
+                return await Task.FromResult(AuthenticateResult.Fail("Missing Authorization Header"));
 
             string user;
             string pass;
@@ -42,11 +42,11 @@ namespace MyLab.ConfigServer.Services.Authorization
             }
             catch
             {
-                return Task.FromResult(AuthenticateResult.Fail("Invalid Authorization Header"));
+                return await Task.FromResult(AuthenticateResult.Fail("Invalid Authorization Header"));
             }
 
-            if (!_authorizationService.Authorize(user,pass))
-                return Task.FromResult(AuthenticateResult.Fail("User-Password pair not found"));
+            if (! await _authorizationService.AuthorizeAsync(user,pass))
+                return await Task.FromResult(AuthenticateResult.Fail("User-Password pair not found"));
 
             var claims = new[] {
                 new Claim(ClaimTypes.NameIdentifier, user),
@@ -56,7 +56,7 @@ namespace MyLab.ConfigServer.Services.Authorization
             var principal = new ClaimsPrincipal(identity);
             var ticket = new AuthenticationTicket(principal, Scheme.Name);
 
-            return Task.FromResult(AuthenticateResult.Success(ticket));
+            return await Task.FromResult(AuthenticateResult.Success(ticket));
         }
     }
 }

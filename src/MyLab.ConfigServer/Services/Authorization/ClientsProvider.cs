@@ -20,8 +20,6 @@ namespace MyLab.ConfigServer.Services.Authorization
     class FileBasedClientsProvider : IClientsProvider
     {
         private readonly string _filename;
-        private AuthorizationItem[] _data;
-        private DateTime _lastUpdate;
 
         public FileBasedClientsProvider(string filename)
         {
@@ -34,20 +32,16 @@ namespace MyLab.ConfigServer.Services.Authorization
 
             if (file.Exists)
             {
-                if (file.LastWriteTime > _lastUpdate)
+                using (var strm = file.OpenRead())
+                using (var rdr = new StreamReader(strm))
                 {
-                    using (var strm = file.OpenRead())
-                    using (var rdr = new StreamReader(strm))
-                    {
-                        var json = await rdr.ReadToEndAsync();
-                     
-                        _data = JsonConvert.DeserializeObject<AuthorizationItem[]>(json);
-                        _lastUpdate = DateTime.Now;
-                    }
+                    var json = await rdr.ReadToEndAsync();
+
+                    return JsonConvert.DeserializeObject<AuthorizationItem[]>(json);
                 }
             }
-            
-            return _data;
+
+            return Enumerable.Empty<AuthorizationItem>();
         }
     }
 }

@@ -10,7 +10,12 @@ using Microsoft.Extensions.Logging;
 using MyLab.ConfigServer.Services;
 using MyLab.ConfigServer.Services.Authorization;
 using MyLab.ConfigServer.Tools;
+using MyLab.HttpMetrics;
+using MyLab.StatusProvider;
 using MyLab.Syslog;
+using MyLab.WebErrors;
+using Newtonsoft.Json;
+using Prometheus;
 
 namespace MyLab.ConfigServer
 {
@@ -61,8 +66,14 @@ namespace MyLab.ConfigServer
             services.AddLogging(b => b
                 .AddSyslog()
                 .AddConsole());
+
+            services.AddUrlBasedHttpMetrics();
+
             services.AddRazorPages();
-            services.AddControllers();
+            services.AddControllers(options =>
+            {
+                options.AddExceptionProcessing();
+            }).AddNewtonsoftJson();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -81,12 +92,23 @@ namespace MyLab.ConfigServer
 
             app.UseRouting();
 
+            app.UseHttpMetrics();
+            app.UseUrlBasedHttpMetrics();
+
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
                 endpoints.MapRazorPages();
+                endpoints.MapMetrics();
+            });
+
+            app.UseStatusApi(serializerSettings: new JsonSerializerSettings
+            {
+                Formatting = Formatting.Indented,
+                NullValueHandling = NullValueHandling.Ignore,
+                TypeNameHandling = TypeNameHandling.All
             });
         }
     }

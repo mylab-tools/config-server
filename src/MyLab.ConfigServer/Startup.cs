@@ -5,7 +5,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.IO;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using MyLab.ConfigServer.Services;
 using MyLab.ConfigServer.Services.Authorization;
@@ -31,13 +30,12 @@ namespace MyLab.ConfigServer
 
         public IWebHostEnvironment CurrentEnvironment { get; set; }
 
-
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             var contentRoot = Path.Combine(
                 Configuration.GetValue<string>(WebHostDefaults.ContentRootKey),
-                CurrentEnvironment.IsDevelopment() 
+                CurrentEnvironment.IsDevelopment()
                     ? "DevResources"
                     : "Resources"
             );
@@ -60,7 +58,7 @@ namespace MyLab.ConfigServer
                 .AddScheme<AuthenticationSchemeOptions, DefaultBasicIdentityService>(
                     BasicAuthSchemaName.Name, null);
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
+            //services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 
             services.Configure<SyslogLoggerOptions>(Configuration.GetSection("Logging:Syslog"));
             services.AddLogging(b => b
@@ -69,8 +67,7 @@ namespace MyLab.ConfigServer
 
             services.AddUrlBasedHttpMetrics();
 
-            services.AddRazorPages();
-            services.AddControllers(options =>
+            services.AddControllersWithViews(options =>
             {
                 options.AddExceptionProcessing();
             }).AddNewtonsoftJson();
@@ -85,9 +82,8 @@ namespace MyLab.ConfigServer
             }
             else
             {
-                app.UseExceptionHandler("/Error");
+                app.UseExceptionHandler("/Home/Error");
             }
-
             app.UseStaticFiles();
 
             app.UseRouting();
@@ -99,8 +95,9 @@ namespace MyLab.ConfigServer
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllers();
-                endpoints.MapRazorPages();
+                endpoints.MapControllerRoute(
+                    name: "default",
+                    pattern: "{controller=Home}/{action=Index}/{id?}");
                 endpoints.MapMetrics();
             });
 

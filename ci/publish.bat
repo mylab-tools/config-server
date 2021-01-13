@@ -1,4 +1,4 @@
-echo off
+@echo off
 
 IF [%1]==[] goto noparam
 

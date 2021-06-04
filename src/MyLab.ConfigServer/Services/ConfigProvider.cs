@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using MyLab.ConfigServer.Tools;
+using Newtonsoft.Json;
 
 namespace MyLab.ConfigServer.Services
 {
@@ -108,7 +109,7 @@ namespace MyLab.ConfigServer.Services
             return new ConfigInfo
             {
                 Secrets = _secretsAnalyzer.GetSecrets(config).ToArray(),
-                Content = config.Serialize(true)
+                Content = JsonPrettify(str)
             };
         }
 
@@ -120,7 +121,7 @@ namespace MyLab.ConfigServer.Services
             return new ConfigInfo
             {
                 Secrets = _secretsAnalyzer.GetSecrets(config).ToArray(),
-                Content = config.Serialize(true)
+                Content = JsonPrettify(str)
             };
         }
 
@@ -132,7 +133,7 @@ namespace MyLab.ConfigServer.Services
             return new ConfigInfo
             {
                 Secrets = _secretsAnalyzer.GetSecrets(config).ToArray(),
-                Content = config.Serialize(true)
+                Content = JsonPrettify(str)
             };
         }
 
@@ -153,6 +154,18 @@ namespace MyLab.ConfigServer.Services
             }
 
             return originDoc;
+        }
+
+        public static string JsonPrettify(string json)
+        {
+            using (var stringReader = new StringReader(json))
+            using (var stringWriter = new StringWriter())
+            {
+                var jsonReader = new JsonTextReader(stringReader);
+                var jsonWriter = new JsonTextWriter(stringWriter) { Formatting = Formatting.Indented };
+                jsonWriter.WriteToken(jsonReader);
+                return stringWriter.ToString();
+            }
         }
     }
 }

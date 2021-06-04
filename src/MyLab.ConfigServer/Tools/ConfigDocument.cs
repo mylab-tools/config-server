@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -43,7 +44,8 @@ namespace MyLab.ConfigServer.Tools
                 .Nodes()
                 .OfType<XComment>()
                 .Where(c => c.Value.StartsWith("include:"))
-                .Select(c => new ConfigDocumentInclude(c));
+                .Select(c => new ConfigDocumentInclude(c))
+                .ToArray();
         }
 
 
@@ -52,7 +54,8 @@ namespace MyLab.ConfigServer.Tools
             return _xDoc
                 .Descendants()
                 .Where(e => e != _xDoc.Root && !e.HasElements)
-                .Select(n => new ConfigDocumentOverride(XElementPathProvider.Provide(n), n.Value));
+                .Select(n => new ConfigDocumentOverride(XElementPathProvider.Provide(n), n.Value))
+                .ToArray();
         }
 
         public void ApplyOverrides(IEnumerable<ConfigDocumentOverride> overrides)

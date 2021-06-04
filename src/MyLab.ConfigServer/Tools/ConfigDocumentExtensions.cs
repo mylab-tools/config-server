@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace MyLab.ConfigServer.Tools
@@ -21,25 +22,25 @@ namespace MyLab.ConfigServer.Tools
             }
         }
 
-        public static async Task ApplyIncludes(this ConfigDocument doc, IIncludesProvider includeProvider)
+        public static Task ApplyIncludes(this ConfigDocument doc, IIncludesProvider includeProvider)
         {
             if (doc == null) throw new ArgumentNullException(nameof(doc));
             if (includeProvider == null) throw new ArgumentNullException(nameof(includeProvider));
 
-            await ResolveIncludes(doc, 0);
+            return ResolveIncludes(doc, 0, includeProvider);
+        }
 
-            async Task ResolveIncludes(ConfigDocument confDoc, int deepCount)
+        static async Task ResolveIncludes(ConfigDocument confDoc, int deepCount, IIncludesProvider includeProvider)
+        {
+            if (deepCount >= 2) return;
+
+            foreach (var include in confDoc.GetIncludes())
             {
-                if (deepCount >= 2) return;
+                var includeContent = await includeProvider.GetInclude(include.Link);
 
-                foreach (var include in confDoc.GetIncludes())
-                {
-                    var includeContent = await includeProvider.GetInclude(include.Link);
+                await ResolveIncludes(includeContent, deepCount + 1, includeProvider);
 
-                    await ResolveIncludes(includeContent, deepCount + 1);
-
-                    include.Resolve(includeContent);
-                }
+                include.Resolve(includeContent);
             }
         }
 

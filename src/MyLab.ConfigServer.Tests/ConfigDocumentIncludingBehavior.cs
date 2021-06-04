@@ -14,14 +14,21 @@ namespace MyLab.ConfigServer.Tests
                 "\"IncludeConflict\":\"from-base-val\"" +
             "}";
 
+        private const string IncludeSimple = 
+            "{" +
+                "\"Included\":\"from-include-val\"," +
+                "\"IncludeConflict\":\"from-include-val\"" +
+            "}";
+
         [Fact]
         public async Task ShouldResolveIncludes()
         {
             //Arrange
             var doc = ConfigDocument.Load(SrcConfig);
+            var includeProvider = new TestIncludeProvider(IncludeSimple);
 
             //Act
-            await doc.ApplyIncludes(new TestIncludeProvider());
+            await doc.ApplyIncludes(includeProvider);
 
             var res = TestModel.Create(doc);
 
@@ -35,9 +42,10 @@ namespace MyLab.ConfigServer.Tests
         {
             //Arrange
             var doc = ConfigDocument.Load(SrcConfig);
+            var includeProvider = new TestIncludeProvider(IncludeSimple);
 
             //Act
-            await doc.ApplyIncludes(new TestIncludeProvider());
+            await doc.ApplyIncludes(includeProvider);
 
             var res = TestModel.Create(doc);
 
@@ -45,10 +53,59 @@ namespace MyLab.ConfigServer.Tests
             Assert.Equal("from-base-val", res.IncludeConflict);
         }
 
+        [Fact]
+        public async Task ShouldIncludeArray()
+        {
+            //Arrange
+            const string includeArray =
+                "{" +
+                    "\"IncludedArray\":[\"foo\",\"bar\"]," +
+                    "\"IncludeConflict\":\"from-include-val\"" +
+                "}";
+            var doc = ConfigDocument.Load(SrcConfig);
+            var includeProvider = new TestIncludeProvider(includeArray);
+
+            //Act
+            await doc.ApplyIncludes(includeProvider);
+
+            var res = TestModel.Create(doc);
+
+            //Assert
+            Assert.NotNull(res.IncludedArray);
+            Assert.Equal(2, res.IncludedArray.Length);
+            Assert.Equal("foo", res.IncludedArray[0]);
+            Assert.Equal("bar", res.IncludedArray[1]);
+        }
+
+        [Fact]
+        public async Task ShouldIncludeOneItemArray()
+        {
+            //Arrange
+            const string includeArray =
+                "{" +
+                    "\"IncludedArray\":[\"foo\"]," +
+                    "\"IncludeConflict\":\"from-include-val\"" +
+                "}";
+            var doc = ConfigDocument.Load(SrcConfig);
+            var includeProvider = new TestIncludeProvider(includeArray);
+
+            //Act
+            await doc.ApplyIncludes(includeProvider);
+
+            var res = TestModel.Create(doc);
+
+            //Assert
+            Assert.NotNull(res.IncludedArray);
+            Assert.Single(res.IncludedArray);
+            Assert.Equal("foo", res.IncludedArray[0]);
+        }
+
         class TestModel
         {
             public string Included { get; set; }
             public string IncludeConflict { get; set; }
+
+            public string[] IncludedArray { get; set; }
 
             public static TestModel Create(ConfigDocument confDoc)
             {
@@ -58,13 +115,16 @@ namespace MyLab.ConfigServer.Tests
 
         class TestIncludeProvider : IIncludesProvider
         {
+            private readonly string _cfg;
+
+            public TestIncludeProvider(string cfg)
+            {
+                _cfg = cfg;
+            }
+
             public Task<ConfigDocument> GetInclude(string id)
             {
-                string config = "{" +
-                                    "\"Included\":\"from-include-val\"," +
-                                    "\"IncludeConflict\":\"from-include-val\"" +
-                                "}";
-                return Task.FromResult(ConfigDocument.Load(config));
+                return Task.FromResult(ConfigDocument.Load(_cfg));
             }
         }
     }

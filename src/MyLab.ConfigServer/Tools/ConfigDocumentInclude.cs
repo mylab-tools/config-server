@@ -26,12 +26,13 @@ namespace MyLab.ConfigServer.Tools
                 .Descendants()
                 .Where(e => !e.HasElements);
 
+            var addElements = new List<XElement>();
             foreach (var pe in payloadElements)
             {
-                var elementPath = new List<XElement>();
-                GetElementPath(pe, elementPath);
+                var pathItems = new List<XElement>();
+                GetElementPath(pe, pathItems);
 
-                var newElement = BuildPathElements(_includeComment.Parent, elementPath);
+                var newElement = BuildPathElements(_includeComment.Parent, pathItems.ToArray(), pe.Name.LocalName, addElements);
 
                 if (string.IsNullOrEmpty(newElement.Value))
                     newElement.Value = pe.Value;
@@ -40,16 +41,32 @@ namespace MyLab.ConfigServer.Tools
             _includeComment.Remove();
         }
 
-        XElement BuildPathElements(XContainer root, IEnumerable<XElement> path)
+        XElement BuildPathElements(XContainer root, XElement[] pathItems, string endElementName, List<XElement> addElements)
         {
             XContainer parentContainer = root;
             XElement pathItemElement = null;
-            foreach (var pe in path)
+
+            for (int i = 0; i < pathItems.Length; i++)
             {
-                pathItemElement = parentContainer.Elements().FirstOrDefault(e => e.Name.LocalName == pe.Name.LocalName);
-                if (pathItemElement == null)
+                var pathItem = pathItems[i];
+
+                pathItemElement = parentContainer.Elements().FirstOrDefault(e => e.Name.LocalName == pathItem.Name.LocalName);
+
+                bool isLastPathItem = i == pathItems.Length - 1;
+                if (pathItemElement == null ||
+                    (isLastPathItem && pathItem.Name.LocalName == endElementName && addElements.Contains(pathItemElement)))
                 {
-                    pathItemElement = new XElement(pe.Name);
+                    pathItemElement = new XElement(XName.Get(pathItem.Name.LocalName));
+
+                    var isArrayAttrName = XName.Get("Array", "http://james.newtonking.com/projects/json");
+                    var isArrAttr = pathItem.Attribute(isArrayAttrName);
+                    if (isArrAttr != null)
+                    {
+                        pathItemElement.Add(new XAttribute(isArrayAttrName, isArrAttr.Value));
+                    }
+                    
+                    addElements.Add(pathItemElement);
+
                     parentContainer.Add(pathItemElement);
                 }
 
@@ -59,11 +76,11 @@ namespace MyLab.ConfigServer.Tools
             return pathItemElement;
         }
 
-        void GetElementPath(XElement endElement, List<XElement> elements)
+        void GetElementPath(XElement endElement, List<XElement> pathItems)
         {
-            elements.Insert(0, endElement);
+            pathItems.Insert(0, endElement);
             if (endElement.Parent != null && endElement.Document?.Root != endElement.Parent)
-                GetElementPath(endElement.Parent, elements);
+                GetElementPath(endElement.Parent, pathItems);
         }
     }
 }

@@ -18,7 +18,7 @@ namespace MyLab.ConfigServer.Tools
 
         public static ConfigDocument Load(string json)
         {
-            return new ConfigDocument(JsonConvert.DeserializeXNode(json, "root"));
+            return new ConfigDocument(JsonConvert.DeserializeXNode(json, "root", true));
         }
 
         public string Serialize(bool pretty)

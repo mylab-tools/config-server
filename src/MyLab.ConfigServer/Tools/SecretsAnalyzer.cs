@@ -1,15 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
 
 namespace MyLab.ConfigServer.Tools
 {
     class SecretsAnalyzer
     {
-        private const string ValueRegExpr = "\\[secret:(?<skey>[\\w\\-\\d]+)\\]";
-
         private readonly string[] _resolvedKeys;
 
         public SecretsAnalyzer(ISecretsProvider secretsProvider)
@@ -17,23 +12,15 @@ namespace MyLab.ConfigServer.Tools
             _resolvedKeys = secretsProvider.Provide().Keys.ToArray();
         }
 
-        public IEnumerable<ConfigSecret> GetSecrets(string configStrData)
+        public IEnumerable<ConfigSecret> GetSecrets(ConfigDocument confDoc)
         {
-            var xmlJson = JsonConvert.DeserializeXNode(configStrData, "root");
-
-            foreach (var descendant in xmlJson.Descendants().Where(d => !d.HasElements))
+            foreach (var secret in confDoc.GetSecrets())
             {
-                var match = Regex.Match(descendant.Value, ValueRegExpr);
-                if (!match.Success)
-                    continue;
-
-                var secretKey = match.Groups["skey"].Value;
-
                 yield return new ConfigSecret
                 {
-                    FieldPath = XElementPathProvider.Provide(descendant),
-                    SecretKey = secretKey,
-                    Resolved = _resolvedKeys.Contains(secretKey)
+                    FieldPath = secret.Path,
+                    SecretKey = secret.Key,
+                    Resolved = _resolvedKeys.Contains(secret.Key)
                 };
             }
         }

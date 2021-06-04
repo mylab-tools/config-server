@@ -8,7 +8,8 @@ namespace MyLab.ConfigServer.Tests
 {
     public class SecretAnalyzerBehavior
     {
-        const string Config = "{ \"ResolvedSecret\": \"[secret:some-secret1]\", \"UnresolvedSecret\": \"[secret:some-secret2]\" }";
+        static ConfigDocument Config = ConfigDocument.Load("{ \"ResolvedSecret\": \"[secret:some-secret1]\", \"UnresolvedSecret\": \"[secret:some-secret2]\" }");
+
         private readonly ISecretsProvider _secretsProvider;
         static readonly string[] ResolvedSecrets= new []{ "some-secret1" };
 

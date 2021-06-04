@@ -5,7 +5,7 @@ namespace MyLab.ConfigServer.Tools
 {
     interface IIncludesProvider
     {
-        Task<string> GetInclude(string id);
+        Task<ConfigDocument> GetInclude(string id);
     }
 
     class DefaultIncludeProvider : IIncludesProvider
@@ -19,12 +19,14 @@ namespace MyLab.ConfigServer.Tools
         {
             BasePath = basePath;
         }
-        public async Task<string> GetInclude(string id)
+        public async Task<ConfigDocument> GetInclude(string id)
         {
             var filePath = Path.Combine(BasePath, id + ".json");
-            return File.Exists(filePath) ? 
+            var content = File.Exists(filePath) ? 
                 await File.ReadAllTextAsync(filePath) :
                 await Task.FromResult<string>(null);
+
+            return ConfigDocument.Load(content);
         }
     }
 }

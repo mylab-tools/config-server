@@ -27,7 +27,7 @@ namespace MyLab.ConfigServer.Services
 
     class DefaultConfigProvider : IConfigProvider
     {
-        private readonly SecretApplier _secretApplier;
+        private readonly ISecretsProvider _secretsProvider;
         private readonly SecretsAnalyzer _secretsAnalyzer;
         private string ConfigsPath { get; }
         private string OverridesPath { get; }
@@ -37,12 +37,11 @@ namespace MyLab.ConfigServer.Services
         /// Initializes a new instance of <see cref="DefaultConfigProvider"/>
         /// </summary>
         public DefaultConfigProvider(
-            string basePath, 
-            SecretApplier secretApplier,
-            SecretsAnalyzer secretsAnalyzer)
+            string basePath,
+            ISecretsProvider secretsProvider)
         {
-            _secretApplier = secretApplier;
-            _secretsAnalyzer = secretsAnalyzer;
+            _secretsProvider = secretsProvider;
+            _secretsAnalyzer = new SecretsAnalyzer(secretsProvider);
             ConfigsPath = Path.Combine(basePath, "Configs");
             OverridesPath = Path.Combine(basePath, "Overrides");
             IncludePath = Path.Combine(basePath, "Includes");
@@ -80,77 +79,80 @@ namespace MyLab.ConfigServer.Services
 
         public async Task<ConfigInfo> LoadConfig(string id, bool prettyJson)
         {
-            var confWithUnresolvedSecrets = await LoadConfigCore(id, prettyJson);
-
-            var config = _secretApplier.ApplySecrets(confWithUnresolvedSecrets);
+            var confDoc = await LoadConfigCore(id);
+            confDoc.ApplySecrets(_secretsProvider);
 
             return new ConfigInfo
             {
-                Secrets = _secretsAnalyzer.GetSecrets(config).ToArray(),
-                Content = config
+                Secrets = _secretsAnalyzer.GetSecrets(confDoc).ToArray(),
+                Content = confDoc.Serialize(prettyJson)
             };
         }
 
         public async Task<ConfigInfo> LoadConfigWithoutSecrets(string id, bool prettyJson)
         {
-            var config = await LoadConfigCore(id, prettyJson);
+            var config = await LoadConfigCore(id);
 
             return new ConfigInfo
             {
                 Secrets = _secretsAnalyzer.GetSecrets(config).ToArray(),
-                Content = config
+                Content = config.Serialize(prettyJson)
             };
         }
 
         public async Task<ConfigInfo> LoadConfigBase(string id)
         {
             var str = await File.ReadAllTextAsync(Path.Combine(ConfigsPath, id + ".json"));
-            var config = JsonPrettyFormatter.JsonPrettify(str);
+            var config = ConfigDocument.Load(str);
 
             return new ConfigInfo
             {
                 Secrets = _secretsAnalyzer.GetSecrets(config).ToArray(),
-                Content = config
+                Content = config.Serialize(true)
             };
         }
 
         public async Task<ConfigInfo> LoadOverride(string id)
         {
             var str = await File.ReadAllTextAsync(Path.Combine(OverridesPath, id + ".json"));
-            var config = JsonPrettyFormatter.JsonPrettify(str);
+            var config = ConfigDocument.Load(str);
 
             return new ConfigInfo
             {
                 Secrets = _secretsAnalyzer.GetSecrets(config).ToArray(),
-                Content = config
+                Content = config.Serialize(true)
             };
         }
 
         public async Task<ConfigInfo> LoadInclude(string id)
         {
             var str = await File.ReadAllTextAsync(Path.Combine(IncludePath, id + ".json"));
-            var config = JsonPrettyFormatter.JsonPrettify(str);
+            var config = ConfigDocument.Load(str);
 
             return new ConfigInfo
             {
                 Secrets = _secretsAnalyzer.GetSecrets(config).ToArray(),
-                Content = config
+                Content = config.Serialize(true)
             };
         }
 
-        public async Task<string> LoadConfigCore(string id, bool prettyJson)
+        public async Task<ConfigDocument> LoadConfigCore(string id)
         {
             var originStr = await File.ReadAllTextAsync(Path.Combine(ConfigsPath, id + ".json"));
+            var originDoc = ConfigDocument.Load(originStr);
+
+            await originDoc.ApplyIncludes(new DefaultIncludeProvider(IncludePath));
 
             var overridePath = Path.Combine(OverridesPath, id + ".json");
             var overridingStr = File.Exists(overridePath) ? await File.ReadAllTextAsync(overridePath) : null;
 
-            var configBuilder = new ConfigBuilder(new DefaultIncludeProvider(IncludePath))
+            if (!string.IsNullOrWhiteSpace(overridingStr))
             {
-                PrettyJson = prettyJson
-            };
+                var overrideDoc = ConfigDocument.Load(overridingStr);
+                originDoc.ApplyOverride(overrideDoc);
+            }
 
-            return await configBuilder.Build(originStr, overridingStr);
+            return originDoc;
         }
     }
 }

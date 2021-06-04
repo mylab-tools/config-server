@@ -42,10 +42,8 @@ namespace MyLab.ConfigServer
 
             var secretsFilePath = Path.Combine(contentRoot, "secrets.json");
             var secretsProvider = DefaultSecretsProvider.LoadFromFile(secretsFilePath);
-            var secretsApplier = new SecretApplier(secretsProvider);
-            var secretAnalyzer = new SecretsAnalyzer(secretsProvider);
 
-            services.AddSingleton<IConfigProvider>(new DefaultConfigProvider(contentRoot, secretsApplier, secretAnalyzer));
+            services.AddSingleton<IConfigProvider>(new DefaultConfigProvider(contentRoot, secretsProvider));
 
             var clientsFile = Path.Combine(contentRoot, "clients.json");
             var clientsProvider = new FileBasedClientsProvider(clientsFile);
@@ -57,9 +55,6 @@ namespace MyLab.ConfigServer
             services.AddAuthentication()
                 .AddScheme<AuthenticationSchemeOptions, DefaultBasicIdentityService>(
                     BasicAuthSchemaName.Name, null);
-
-            //services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
-
             services.Configure<SyslogLoggerOptions>(Configuration.GetSection("Logging:Syslog"));
             services.AddLogging(b => b
                 .AddSyslog()

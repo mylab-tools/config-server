@@ -24,7 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MyLab.ConfigServer\MyLab.ConfigServer.csproj" />
+    <ProjectReference Include="..\MyLab.ConfigServer_old\MyLab.ConfigServer_old.csproj" />
   </ItemGroup>
 
   <ItemGroup>

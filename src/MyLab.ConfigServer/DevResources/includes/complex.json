@@ -1,0 +1,4 @@
+{ 
+  //include: redis
+  //include: rabbit
+}

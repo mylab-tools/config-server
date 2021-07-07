@@ -40,9 +40,9 @@ namespace MyLab.ConfigServer.Server.Services
         {
             _secretsProvider = secretsProvider;
             _secretsAnalyzer = new SecretsAnalyzer(secretsProvider);
-            ConfigsPath = Path.Combine(basePath, "Configs");
-            OverridesPath = Path.Combine(basePath, "Overrides");
-            IncludePath = Path.Combine(basePath, "Includes");
+            ConfigsPath = Path.Combine(basePath, "configs");
+            OverridesPath = Path.Combine(basePath, "overrides");
+            IncludePath = Path.Combine(basePath, "includes");
         }
 
         public IEnumerable<StoredConfig> GetConfigList()

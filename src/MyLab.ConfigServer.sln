@@ -9,11 +9,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyLab.ConfigServer.FuncTest
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyLab.ConfigServer_old", "MyLab.ConfigServer_old\MyLab.ConfigServer_old.csproj", "{ECF428DF-DE99-4F81-BBF2-EC35085F9159}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyLab.ConfigServer.Server", "MyLab.ConfigServer\Server\MyLab.ConfigServer.Server.csproj", "{4D122B05-0948-44E0-B8B6-360B18BA0542}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyLab.ConfigServer.Server", "MyLab.ConfigServer\Server\MyLab.ConfigServer.Server.csproj", "{4D122B05-0948-44E0-B8B6-360B18BA0542}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyLab.ConfigServer.Client", "MyLab.ConfigServer\Client\MyLab.ConfigServer.Client.csproj", "{7FBF08C7-17AD-42EC-9A5A-D7C6A6025283}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyLab.ConfigServer.Client", "MyLab.ConfigServer\Client\MyLab.ConfigServer.Client.csproj", "{7FBF08C7-17AD-42EC-9A5A-D7C6A6025283}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyLab.ConfigServer.Shared", "MyLab.ConfigServer\Shared\MyLab.ConfigServer.Shared.csproj", "{D2EA18B3-C1CB-44CE-9C5C-F360115EEECA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyLab.ConfigServer.Shared", "MyLab.ConfigServer\Shared\MyLab.ConfigServer.Shared.csproj", "{D2EA18B3-C1CB-44CE-9C5C-F360115EEECA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

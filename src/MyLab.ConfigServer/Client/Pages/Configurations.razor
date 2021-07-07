@@ -1,7 +1,6 @@
 ﻿@page "/configs"
 @using MyLab.ConfigServer.Shared
 @inject IConfigServiceV2 Service
-@inject HttpClient Http
 
 @if (_configList == null)
 {
@@ -9,10 +8,10 @@
 }
 else
 {
-    <ul class="list-group">
+    <ul class="list-group list-group-flush">
         @foreach (var config in _configList.Configs)
         {
-        <li class="list-group-item d-flex justify-content-between align-items-center">
+        <a href="configs/@config.Name" class="list-group-item d-flex justify-content-between align-items-center">
             <div class="ms-2 me-auto">
                 <span class="fw-bold">@config.Name</span>
             </div>
@@ -28,7 +27,7 @@ else
                 </span> 
                 <span>@config.LastModified.ToString("dd.MM.yy HH:mm")</span>
             </div>
-        </li>
+        </a>
         }
     </ul>
 }

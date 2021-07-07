@@ -24,9 +24,9 @@ namespace MyLab.ConfigServer.Server.Controllers
             {
                 var configClients = ConfigProvider
                     .GetOverrideList()
-                    .OrderBy(n => n)
+                    .OrderBy(n => n.Name)
                     .ToArray();
-                return View(new ConfigStorageViewModel
+                return Ok(new ConfigStorageViewModel
                 {
                     Configs = configClients
                 });
@@ -40,7 +40,7 @@ namespace MyLab.ConfigServer.Server.Controllers
                     Id = id,
                     ConfigInfo = await ConfigProvider.LoadOverride(id)
                 };
-                return View(model);
+                return Ok(model);
             }
     }
 }

@@ -1,0 +1,19 @@
+﻿@inject NavigationManager NavigationManager
+
+<div class="mt-3">
+    <a href="@_basePath">
+        <i class="fa fa-arrow-left"></i>
+        <span>Back to list</span>
+    </a>
+</div>
+
+@code {
+    string _basePath;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var uri = new Uri(NavigationManager.Uri);
+        _basePath = uri.AbsoluteUri.Remove(uri.AbsoluteUri.Length - uri.Segments.Last().Length);
+    }
+
+}

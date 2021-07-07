@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyLab.ConfigServer.FuncTest
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyLab.ConfigServer_old", "MyLab.ConfigServer_old\MyLab.ConfigServer_old.csproj", "{ECF428DF-DE99-4F81-BBF2-EC35085F9159}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyLab.ConfigServer", "MyLab.ConfigServer\MyLab.ConfigServer.csproj", "{13CD07F3-4079-43C5-8524-DA3D831C87F4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyLab.ConfigServer_tmp", "MyLab.ConfigServer_tmp\MyLab.ConfigServer_tmp.csproj", "{13CD07F3-4079-43C5-8524-DA3D831C87F4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

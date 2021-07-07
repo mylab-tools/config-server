@@ -6,6 +6,9 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="5.0.4" />
+    <PackageReference Include="MyLab.HttpMetrics" Version="1.0.2" />
+    <PackageReference Include="MyLab.StatusProvider" Version="1.5.9" />
+    <PackageReference Include="MyLab.WebErrors" Version="1.0.3" />
   </ItemGroup>
 
   <ItemGroup>

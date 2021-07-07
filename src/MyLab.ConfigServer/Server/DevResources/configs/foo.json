@@ -1,0 +1,12 @@
+{
+  //include: complex
+  "FooParam": "FooVal",
+  "ParamForOverride": "OldVal",
+  "SecretParam": "[secret:some-secret]",
+  "InnerObject": {
+    "Bar": "BarVal"
+  },
+  "Redis": {
+    "DbIndex": "3"
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "Redis": {
+    "Host": "redis.host.ru",
+    "Password": "[secret:redis-pass]"
+  } 
+}

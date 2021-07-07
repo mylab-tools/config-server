@@ -1,0 +1,4 @@
+{
+  "BarParam" :  "BarVal",
+  "SecretBarParam2": "[secret:unresolved-secret]"
+}

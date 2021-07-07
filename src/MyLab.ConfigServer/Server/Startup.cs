@@ -58,7 +58,6 @@ namespace MyLab.ConfigServer.Server
             services.AddUrlBasedHttpMetrics();
 
             services.AddControllers(opt => opt.AddExceptionProcessing());
-            services.AddControllersWithViews();
             services.AddRazorPages();
         }
 
@@ -74,7 +73,7 @@ namespace MyLab.ConfigServer.Server
             {
                 app.UseExceptionHandler("/Error");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
+                //app.UseHsts();
             }
 
             app.UseHttpsRedirection();

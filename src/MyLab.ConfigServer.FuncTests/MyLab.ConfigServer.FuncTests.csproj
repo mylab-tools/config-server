@@ -22,7 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MyLab.ConfigServer_old\MyLab.ConfigServer_old.csproj" />
+    <ProjectReference Include="..\MyLab.ConfigServer\Server\MyLab.ConfigServer.Server.csproj" />
   </ItemGroup>
 
 </Project>

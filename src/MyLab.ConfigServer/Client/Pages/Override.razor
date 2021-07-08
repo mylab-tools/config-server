@@ -23,11 +23,15 @@ else
     [Parameter]
     public string Id { get; set; }
 
+    [CascadingParameter]
+    public MainLayout Layout { get; set; }
+
     private ConfigViewModel _config;
 
     protected override async Task OnInitializedAsync()
     {
         _config = await Service.GetOverrideDetails(Id);
+        Layout.Title = "Overrides / " + Id;
     }
 
 }

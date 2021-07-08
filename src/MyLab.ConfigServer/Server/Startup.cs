@@ -76,7 +76,7 @@ namespace MyLab.ConfigServer.Server
                 //app.UseHsts();
             }
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
             app.UseBlazorFrameworkFiles();
             app.UseStaticFiles();
 

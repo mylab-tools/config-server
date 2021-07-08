@@ -10,10 +10,12 @@
 @code {
     string _basePath;
 
-    protected override async Task OnInitializedAsync()
+    protected override Task OnInitializedAsync()
     {
         var uri = new Uri(NavigationManager.Uri);
         _basePath = uri.AbsoluteUri.Remove(uri.AbsoluteUri.Length - uri.Segments.Last().Length);
+
+        return Task.CompletedTask;
     }
 
 }

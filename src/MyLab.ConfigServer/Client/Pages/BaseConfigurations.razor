@@ -35,6 +35,13 @@ else
 @code {
     private ConfigStorageViewModel _configList;
 
-    protected override async Task OnInitializedAsync() =>
+    [CascadingParameter]
+    public MainLayout Layout { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
         _configList = await Service.GetBaseConfigList();
+        Layout.Title = "Base Configurations";
+    }
+
 }

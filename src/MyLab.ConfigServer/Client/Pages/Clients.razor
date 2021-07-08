@@ -18,12 +18,17 @@ else
             </li>
         }
     </ul>
-    <BackToList />
 }
 
 @code {
+    [CascadingParameter]
+    public MainLayout Layout { get; set; }
+
     private ClientsStorageViewModel _clients;
 
-    protected override async Task OnInitializedAsync() =>
+    protected override async Task OnInitializedAsync()
+    {
         _clients = await Service.GetClientList();
+        Layout.Title = "Clients";
+    }
 }

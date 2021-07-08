@@ -33,10 +33,16 @@ else
 }
 
 @code {
+    [CascadingParameter]
+    public MainLayout Layout { get; set; }
+
     private ConfigStorageViewModel _configList;
 
-    protected override async Task OnInitializedAsync() =>
+    protected override async Task OnInitializedAsync()
+    {
         _configList = await Service.GetIncludeList();
+        Layout.Title = "Includes";
+    }
 
 }
 

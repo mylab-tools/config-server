@@ -1,0 +1,47 @@
+﻿    @page "/configs"
+@using MyLab.ConfigServer.Shared
+@inject IConfigServiceV2 Service
+
+@if (_configList == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <ul class="list-group list-group-flush">
+        @foreach (var config in _configList.Configs)
+        {
+        <a href="configs/@config.Name" class="list-group-item d-flex justify-content-between align-items-center">
+            <div class="ms-2 me-auto">
+                <span class="fw-bold">@config.Name</span>
+            </div>
+            <div class="me-5">
+                <span class="text-black-50" title="File length">
+                    <i class="fa fa-ruler-vertical me-1"></i>
+                </span>
+                <span>@((((double)config.Length)/1024d).ToString("F2"))kb</span>
+            </div>
+            <div>
+                <span class="text-black-50" title="Last modified">
+                    <i class="fa fa-pen-square me-1"></i>
+                </span> 
+                <span>@config.LastModified.ToString("dd.MM.yy HH:mm")</span>
+            </div>
+        </a>
+        }
+    </ul>
+}
+
+@code {
+    [CascadingParameter]
+    public MainLayout Layout { get; set; }
+
+    private ConfigStorageViewModel _configList;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _configList = await Service.GetConfigList();
+        Layout.Title = "Configurations";
+    }
+
+}

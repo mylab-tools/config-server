@@ -1,0 +1,45 @@
+﻿<div>
+    <ul class="nav nav-pills flex-column mb-auto">
+        <li class="nav-item">
+            <NavLink href="configs" class="nav-link text-white">
+                <i class="fa fa-file-code fa-fw me-2"></i>
+                <span>Configurations</span>
+            </NavLink>
+        </li>
+        <li class="nav-item">
+            <NavLink href="base-configs" class="nav-link text-white">
+                <i class="fa fa-file fa-fw me-2"></i>
+                <span>Base configurations</span>
+            </NavLink>
+        </li>
+        <li class="nav-item">
+            <NavLink href="overrides" class="nav-link text-white">
+                <i class="fa fa-file-signature fa-fw me-2"></i>
+                <span>Overrides</span>
+            </NavLink>
+        </li>
+        <li class="nav-item">
+            <NavLink href="includes" class="nav-link text-white">
+                <i class="fa fa-file-invoice fa-fw me-2"></i>
+                <span>Includes</span>
+            </NavLink>
+        </li>
+        <li class="nav-item">
+            <NavLink href="clients" class="nav-link text-white">
+                <i class="fa fa-users fa-fw me-2"></i>
+                <span>Clients</span>
+            </NavLink>
+        </li>
+    </ul>
+</div>
+
+@code {
+    private bool collapseNavMenu = false;
+
+    private string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    private void ToggleNavMenu()
+    {
+        collapseNavMenu = !collapseNavMenu;
+    }
+}

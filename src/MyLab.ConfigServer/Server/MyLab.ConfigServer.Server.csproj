@@ -35,7 +35,7 @@
     <Content Update="DevResources\includes\redis.json">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Content>
-    <Content Update="DevResources\overrides\foo.json">
+    <Content Update="DevResources\Overrides2\foo.json">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Content>
     <Content Update="DevResources\secrets.json">

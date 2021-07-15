@@ -17,28 +17,28 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Update="DevResources\clients.json">
+    <Content Update="dev-resources\clients.json">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Content>
-    <Content Update="DevResources\configs\bar.json">
+    <Content Update="dev-resources\configs\bar.json">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Content>
-    <Content Update="DevResources\configs\foo.json">
+    <Content Update="dev-resources\configs\foo.json">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Content>
-    <Content Update="DevResources\includes\complex.json">
+    <Content Update="dev-resources\includes\complex.json">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Content>
-    <Content Update="DevResources\includes\rabbit.json">
+    <Content Update="dev-resources\includes\rabbit.json">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Content>
-    <Content Update="DevResources\includes\redis.json">
+    <Content Update="dev-resources\includes\redis.json">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Content>
-    <Content Update="DevResources\overrides\foo.json">
+    <Content Update="dev-resources\overrides\foo.json">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Content>
-    <Content Update="DevResources\secrets.json">
+    <Content Update="dev-resources\secrets.json">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

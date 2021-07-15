@@ -35,8 +35,8 @@ namespace MyLab.ConfigServer.Server
             var contentRoot = Path.Combine(
                 Configuration.GetValue<string>(WebHostDefaults.ContentRootKey),
                 CurrentEnvironment.IsDevelopment()
-                    ? "DevResources"
-                    : "Resources"
+                    ? "dev-resources"
+                    : "resources"
             );
 
             

@@ -39,16 +39,12 @@ namespace MyLab.ConfigServer.Server
                     : "Resources"
             );
 
-            var secretsFilePath = Path.Combine(contentRoot, "secrets.json");
-            var secretsProvider = DefaultSecretsProvider.LoadFromFile(secretsFilePath);
-
-            services.AddSingleton<IConfigProvider>(new DefaultConfigProvider(contentRoot, secretsProvider));
-
-            var clientsFile = Path.Combine(contentRoot, "clients.json");
-            var clientsProvider = new FileBasedClientsProvider(clientsFile);
-
-            services.AddSingleton<IClientsProvider>(clientsProvider);
-            services.AddSingleton<IAuthorizationService>(new AuthorizationService(clientsProvider));
+            
+            services.AddSingleton<ISecretsProvider, DefaultSecretsProvider>();
+            services.AddSingleton<IResourcePathProvider>(new ResourcePathProvider(contentRoot));
+            services.AddSingleton<IConfigProvider, DefaultConfigProvider>();
+            services.AddSingleton<IClientsProvider, FileBasedClientsProvider>();
+            services.AddSingleton<IAuthorizationService, AuthorizationService>();
 
 
             services.AddAuthentication()

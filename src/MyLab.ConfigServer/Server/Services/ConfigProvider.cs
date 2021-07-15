@@ -4,8 +4,10 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using MyLab.ConfigServer.Server.Tools;
 using MyLab.ConfigServer.Shared;
+using MyLab.LogDsl;
 using Newtonsoft.Json;
 
 namespace MyLab.ConfigServer.Server.Services
@@ -27,6 +29,7 @@ namespace MyLab.ConfigServer.Server.Services
     {
         private readonly ISecretsProvider _secretsProvider;
         private readonly SecretsAnalyzer _secretsAnalyzer;
+        private readonly DslLogger _log;
         private string ConfigsPath { get; }
         private string OverridesPath { get; }
         private string IncludePath { get; }
@@ -35,11 +38,15 @@ namespace MyLab.ConfigServer.Server.Services
         /// Initializes a new instance of <see cref="DefaultConfigProvider"/>
         /// </summary>
         public DefaultConfigProvider(
-            string basePath,
-            ISecretsProvider secretsProvider)
+            IResourcePathProvider resourcePathProvider,
+            ISecretsProvider secretsProvider,
+            ILogger<DefaultConfigProvider> logger)
         {
+            _log = logger.Dsl();
             _secretsProvider = secretsProvider;
             _secretsAnalyzer = new SecretsAnalyzer(secretsProvider);
+
+            var basePath = resourcePathProvider.Provide();
             ConfigsPath = Path.Combine(basePath, "configs");
             OverridesPath = Path.Combine(basePath, "overrides");
             IncludePath = Path.Combine(basePath, "includes");
@@ -48,34 +55,73 @@ namespace MyLab.ConfigServer.Server.Services
         public IEnumerable<StoredConfig> GetConfigList()
         {
             if (!Directory.Exists(ConfigsPath))
+            {
+                _log.Warning("No configs directory found")
+                    .AndFactIs("ConfigsPath", ConfigsPath)
+                    .Write();
                 return Enumerable.Empty<StoredConfig>();
+            }
 
-            return Directory
+            var found = Directory
                 .EnumerateFiles(ConfigsPath, "*.json")
                 .Select(f => new FileInfo(f))
-                .Select(StoredConfig.FromFile);
+                .Select(StoredConfig.FromFile)
+                .ToArray();
+
+            if(found.Length == 0)
+                _log.Warning("No configs found")
+                    .AndFactIs("ConfigsPath", ConfigsPath)
+                    .Write();
+
+            return found;
         }
 
         public IEnumerable<StoredConfig> GetOverrideList()
         {
             if (!Directory.Exists(OverridesPath))
+            {
+                _log.Warning("No overrides directory found")
+                    .AndFactIs("OverridesPath", OverridesPath)
+                    .Write();
                 return Enumerable.Empty<StoredConfig>();
+            }
 
-            return Directory
+            var found = Directory
                 .EnumerateFiles(OverridesPath, "*.json")
                 .Select(f => new FileInfo(f))
-                .Select(StoredConfig.FromFile);
+                .Select(StoredConfig.FromFile)
+                .ToArray();
+
+            if (found.Length == 0)
+                _log.Warning("No overrides found")
+                    .AndFactIs("OverridesPath", OverridesPath)
+                    .Write();
+
+            return found;
         }
 
         public IEnumerable<StoredConfig> GetIncludeList()
         {
             if (!Directory.Exists(IncludePath))
+            {
+                _log.Warning("No includes directory found")
+                    .AndFactIs("IncludePath", IncludePath)
+                    .Write();
                 return Enumerable.Empty<StoredConfig>();
+            }
 
-            return Directory
+            var found =  Directory
                 .EnumerateFiles(IncludePath, "*.json")
                 .Select(f => new FileInfo(f))
-                .Select(StoredConfig.FromFile);
+                .Select(StoredConfig.FromFile)
+                .ToArray();
+
+            if(found.Length == 0)
+                _log.Warning("No includes found")
+                    .AndFactIs("IncludePath", IncludePath)
+                    .Write();
+
+            return found;
         }
 
         public async Task<ConfigInfo> LoadConfig(string id, bool prettyJson)

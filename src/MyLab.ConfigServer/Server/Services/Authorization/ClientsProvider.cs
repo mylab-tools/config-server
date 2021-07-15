@@ -20,9 +20,9 @@ namespace MyLab.ConfigServer.Server.Services.Authorization
     {
         private readonly string _filename;
 
-        public FileBasedClientsProvider(string filename)
+        public FileBasedClientsProvider(IResourcePathProvider resourcePathProvider)
         {
-            _filename = filename;
+            _filename = Path.Combine(resourcePathProvider.Provide(), "clients.json");
         }
 
         public async Task<IEnumerable<AuthorizationItem>> ProvideAsync()

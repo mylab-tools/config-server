@@ -1,4 +1,7 @@
-﻿using MyLab.ConfigServer.Server.Tools;
+﻿using System.Collections.Generic;
+using System.Linq;
+using MyLab.ConfigServer.Server.Services;
+using MyLab.ConfigServer.Server.Tools;
 using Newtonsoft.Json;
 using Xunit;
 
@@ -62,7 +65,7 @@ namespace UnitTests
         public void ShouldApplySecrets()
         {
             //Arrange
-            var secretProvider = new DefaultSecretsProvider("[{ \"key\": \"some-secret\", \"value\": \"some-val\" }]");
+            var secretProvider = new TestSecretsProvider("[{ \"key\": \"some-secret\", \"value\": \"some-val\" }]");
             var config = ConfigDocument.Load("{\"secret\":\"[secret:some-secret]\"}");
 
             //Act
@@ -81,6 +84,21 @@ namespace UnitTests
             public static TestModel Create(ConfigDocument confDoc)
             {
                 return JsonConvert.DeserializeObject<TestModel>(confDoc.Serialize(false));
+            }
+        }
+
+        class TestSecretsProvider: ISecretsProvider
+        {
+            private readonly string _secretsJson;
+
+            public TestSecretsProvider(string secretsJson)
+            {
+                _secretsJson = secretsJson;
+            }
+            public IDictionary<string, string> Provide()
+            {
+                var items = JsonConvert.DeserializeObject<DefaultSecretsProvider.ConfigSecretItem[]>(_secretsJson);
+                return items.ToDictionary(itm => itm.Key, itm => itm.Value);
             }
         }
 

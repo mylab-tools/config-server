@@ -1,6 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Microsoft.Extensions.Logging;
+using MyLab.ConfigServer.Server.Services;
+using MyLab.LogDsl;
 using Newtonsoft.Json;
 
 namespace MyLab.ConfigServer.Server.Tools
@@ -12,31 +15,33 @@ namespace MyLab.ConfigServer.Server.Tools
 
     class DefaultSecretsProvider : ISecretsProvider
     {
-        private readonly string _json;
+        private readonly string _path;
+        private readonly DslLogger _log;
 
-        public DefaultSecretsProvider(string json)
+        public DefaultSecretsProvider(IResourcePathProvider resourcePathProvider, ILogger<DefaultSecretsProvider> logger = null)
         {
-            _json = json;
-        }
-
-        public static DefaultSecretsProvider LoadFromFile(string filePath)
-        {
-            return new DefaultSecretsProvider(
-                File.Exists(filePath) 
-                    ? File.ReadAllText(filePath)
-                    : null);
+            var dirPath  = resourcePathProvider.Provide();
+            _path = Path.Combine(dirPath, "secrets.json");
+            _log = logger?.Dsl();
         }
 
         public IDictionary<string, string> Provide()
         {
-            if(_json == null)
-                return new Dictionary<string, string>();
+            if (!File.Exists(_path))
+            {
+                _log?.Warning("Secrets file not found")
+                    .AndFactIs("Path", _path)
+                    .Write();
 
-            var items = JsonConvert.DeserializeObject<ConfigSecretItem[]>(_json);
+                return new Dictionary<string, string>();
+            }
+
+            var json = File.ReadAllText(_path);
+            var items = JsonConvert.DeserializeObject<ConfigSecretItem[]>(json);
             return items.ToDictionary(itm => itm.Key, itm => itm.Value);
         }
 
-        private class ConfigSecretItem
+        public class ConfigSecretItem
         {
             public string Key { get; set; }
             public string Value { get; set; }
